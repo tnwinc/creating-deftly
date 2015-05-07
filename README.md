@@ -1,4 +1,4 @@
-# creating-deftly
+# CreatingDeftly
 
 **CreatingDeftly** is an open source project devoted to making automation of Adobe products easier with a unified API, chainable commands, and in-app gui tools.
 
