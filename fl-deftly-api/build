@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+require "fileutils"
+
+FileUtils.rm(Dir.glob("output*"))
+
+def get_file_as_string(fileName)
+    file = File.open(fileName, "rb")
+    contents = file.read
+    file.close
+    contents
+end
+
+_fla = get_file_as_string("lib/Fla.jsfl")
+_ensure = get_file_as_string("lib/Ensure.js")
+_json = get_file_as_string("lib/json2.js")
+
+@output = """
+'use strict';
+var module = {};
+
+//-------- Ensure Code -----------
+#{_ensure}
+
+//-------- Fla Code -----------
+#{_fla}
+
+//-------- JSON Code -----------
+#{_json}
+
+var Ensure = module.Ensure;
+var JSON = module.JSON;
+var Fla = module.Fla();
+
+module.version = '0.0.1';
+
+//----------------------------------------
+//--------------Your Code Here------------
+"""
+    
+output_file = File.new("output.js", "w")
+output_file.write(@output)
+output_file.close

@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require "fileutils"
+
+FileUtils.rm(Dir.glob("output*"))
+
+def get_file_as_string(fileName)
+    file = File.open(fileName, "rb")
+    contents = file.read
+    file.close
+    contents
+end
+
+_ai = get_file_as_string("lib/Ai.js")
+_ensure = get_file_as_string("lib/Ensure.js")
+_json = get_file_as_string("lib/json2.js")
+_obj = get_file_as_string("lib/Obj.js")
+
+@output = """#target Illustrator
+'use strict';
+var module = {};
+
+//-------- Ensure Code -----------
+#{_ensure}
+
+//-------- Obj Code -----------
+#{_obj}
+
+//-------- Ai Code -----------
+#{_ai}
+
+//-------- JSON Code -----------
+#{_json}
+
+var Ensure = module.Ensure;
+var Obj = module.Obj;
+var JSON = module.JSON;
+var Ai = module.Ai;
+
+module.version = '0.0.2';
+
+//----------------------------------------
+//--------------Your Code Here------------
+"""
+    
+output_file = File.new("output.js", "w")
+output_file.write(@output)
+output_file.close
