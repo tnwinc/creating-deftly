@@ -1,9 +1,9 @@
 #target Illustrator
 'use strict';
-// if (!module || !module.Obj || !module.Ensure) {
-//     throw "Ai.js depends on Obj.js and Ensure.js, requiring them to be assigned to var Obj and Ensure first."
-// }
-// var Obj = module.Obj;
+if (!this.Obj || !this.Ensure || !this.Console) {
+    throw "Ai.js depends on Console.js, Ensure.js, and Obj.js. Requiring them to be assigned to var Console, Ensure, & Obj first."
+}
+var Obj = module.Obj;
 module.Ai = {
     getDoc          : function() {
         if (app.documents.length > 0){
