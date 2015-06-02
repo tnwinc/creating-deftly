@@ -1,11 +1,11 @@
 'use strict';
-if (!module) {
-    var module = {};
+if (!this.Console) {
+    throw "Ensure.js depends on Console.js. Requiring it to be assigned to var Console first."
 }
 
 module.Ensure = function(test, requirement) {
     if (!test) {
-        throw ('Requirement: ' + requirement + ', FAILD WITH ' + test);
+        Console.error('Requirement: ' + requirement + ', FAILD WITH ' + test);
     } else {
         return test;
     }
