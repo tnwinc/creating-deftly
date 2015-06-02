@@ -34,10 +34,10 @@ var writeToFile = function(fileName, string) {
 //'w' = writing/overwriting; 'a' = appending; 'r' = reading;
 module.Console = {
     log  : function(string) {
-        writeToFile("stdout.log", string);
+        writeToFile("adobe.log", string);
     },
     error: function(string) {
-        writeToFile("stderr.log", string);
+        writeToFile("adobe.err", string);
         app.quit();
     },
 };
