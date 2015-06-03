@@ -33,4 +33,5 @@ if os == 'OSX'
 
     puts "running installation test..."
     `open -W -F -b com.adobe.illustrator testInstall.jsx`
+    puts "Creating Deftly installed successfully"
 end
