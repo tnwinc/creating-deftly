@@ -21,13 +21,16 @@ if os == 'OSX'
 
     if Dir.exists?(osPath)
         puts "working in #{osPath}"
-        puts "removing any old instalations"
+        puts "removing any old installations"
         FileUtils.rm_r(Dir.glob("#{osPath}creatingDeftly*"))
     else
         Dir.mkdir osPath
         puts "created Startup Scripts folder in \n#{osPath}"
     end
 
-    puts "copying in new instalation"
+    puts "copying in new installation"
     FileUtils.cp_r(Dir.glob('./creatingDeftly*'), Dir.glob("#{osPath}"))
+
+    puts "running installation test..."
+    `open -W -F -b com.adobe.illustrator testInstall.jsx`
 end
