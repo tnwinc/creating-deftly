@@ -2,18 +2,10 @@
 
 require "fileutils"
 
-FileUtils.rm(Dir.glob("output*"))
-
-os = ENV['OS'] || nil
-if os == nil
-    system """ printf 'ERROR!
-+--- Must provide OS to build! ---+
-| Examples:                       |
-|    OS=OSX build                 |
-|    OS=WIN build                 |
-+---------------------------------+'
-"""
-    abort
+path = ENV['PATH']
+os = 'OSX'
+if path.include? "\\"
+    os = 'WIN'
 end
 
 if os == 'OSX'
@@ -31,7 +23,9 @@ if os == 'OSX'
     puts "copying in new installation"
     FileUtils.cp_r(Dir.glob('./creatingDeftly*'), Dir.glob("#{osPath}"))
 
+    working_directory = Dir.pwd
+    test_file_path = "#{working_directory}/testInstall.jsx"
     puts "running installation test..."
-    `open -W -F -b com.adobe.illustrator testInstall.jsx`
-    puts "Creating Deftly installed successfully"
+    `open -W -F -b com.adobe.illustrator #{test_file_path}`
+    puts "Creating Deftly installed successfully!"
 end
