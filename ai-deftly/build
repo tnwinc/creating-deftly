@@ -28,6 +28,6 @@ if os == 'OSX'
         puts "created Startup Scripts folder in \n#{osPath}"
     end
 
-    system "echo copying in new instalation"
+    puts "copying in new instalation"
     FileUtils.cp_r(Dir.glob('./creatingDeftly*'), Dir.glob("#{osPath}"))
 end
