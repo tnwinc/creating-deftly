@@ -15,6 +15,7 @@ var getActiveDocument = function() {
 };
 
 var writeToFile = function(fileName, string) {
+    //'w' = writing/overwriting; 'a' = appending; 'r' = reading;
     var time = new Date();
     var displayTime = ((time.getMonth()+1)+'/'+time.getDate()+'/'+time.getFullYear()+' ['+time.getHours()+':'+time.getMinutes()+':'+time.getSeconds()+']\n');
     var doc = getActiveDocument();
@@ -31,7 +32,7 @@ var writeToFile = function(fileName, string) {
     file.writeln('\n' + activeDoc + displayTime + string);
 };
 
-//'w' = writing/overwriting; 'a' = appending; 'r' = reading;
+
 module.Console = {
     log  : function(string) {
         writeToFile("adobe.log", string);
