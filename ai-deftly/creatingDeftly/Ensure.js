@@ -1,5 +1,5 @@
 'use strict';
-if (!this.Console) {
+if (!this.module.Console) {
     throw "Ensure.js depends on Console.js. Requiring it to be assigned to var Console first."
 }
 

@@ -1,6 +1,6 @@
 #target Illustrator
 'use strict';
-if (!this.Obj || !this.Ensure || !this.Console) {
+if (!this.module.Obj || !this.module.Ensure || !this.module.Console) {
     throw "Ai.js depends on Console.js, Ensure.js, and Obj.js. Requiring them to be assigned to var Console, Ensure, & Obj first."
 }
 
