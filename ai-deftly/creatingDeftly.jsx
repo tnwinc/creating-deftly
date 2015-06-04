@@ -5,7 +5,7 @@
 //
 var srcPath = undefined;
 //var winPathCC   = "/c/Program Files/Adobe/Adobe lllustratorCC/Startup Scripts/creatingDeftly/";
-var winPath2014 = "/c/Program Files/Adobe/Adobe lllustratorCC/Startup Scripts/creatingDeftly/";
+var winPath2014 = "/c/Program Files/Adobe/Adobe lllustrator CC 2014/Startup Scripts/creatingDeftly/";
 //var osxPathCC   = "/Applications/Adobe lllustrator CC 2014/Startup Scripts/creatingDeftly/";
 var osxPath2014 = "/Applications/Adobe Illustrator CC 2014/Startup Scripts/creatingDeftly/";
 
