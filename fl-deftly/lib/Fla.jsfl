@@ -77,7 +77,9 @@ module.Fla = function() {
             item._edit = function() {
                 doc.library.editItem(item.name);
                 var timeline = doc.getTimeline();
-                timeline.layers.forEach(function(l, i) processLayer(l, i, timeline));
+                timeline.layers.forEach(function(l, i) {
+                    processLayer(l, i, timeline)
+                });
                 return timeline;
             };
             item._layers = function() {
