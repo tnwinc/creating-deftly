@@ -33,7 +33,7 @@ var writeToFile = function(fileName, string) {
 };
 
 
-module.Console = {
+this.module.Console = {
     log  : function(string) {
         writeToFile("adobe.log", string);
     },

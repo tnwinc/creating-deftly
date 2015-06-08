@@ -4,7 +4,7 @@ if (!this.module.Obj || !this.module.Ensure || !this.module.Console) {
     throw "Ai.js depends on Console.js, Ensure.js, and Obj.js. Requiring them to be assigned to var Console, Ensure, & Obj first."
 }
 
-module.Ai = {
+this.module.Ai = {
     getDoc          : function() {
         if (app.documents.length > 0){
             return app.activeDocument;

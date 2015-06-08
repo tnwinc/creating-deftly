@@ -492,4 +492,4 @@ if (typeof JSON !== 'object') {
     }
 }());
 
-module.JSON = JSON;
+this.module.JSON = JSON;

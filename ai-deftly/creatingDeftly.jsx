@@ -31,7 +31,7 @@ function require(fileName, alias){
     reqFile.open("r");
     var js = reqFile.read();
     eval(js);
-    return module[alias];
+    return this.module[alias];
 }
 //  --END
 

@@ -3,7 +3,7 @@ if (!module) {
     var module = {};
 }
 
-module.Obj = function(object) {
+this.module.Obj = function(object) {
     return {
         isObject: function() {
             if (object.toString() === '[object Object]') {
