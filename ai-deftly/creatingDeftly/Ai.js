@@ -370,13 +370,6 @@ this.module.Ai = {
             var rect = artboard.artboardRect;
             artboards.insert(rect, 0);
             artboards[0].name = artboards[artboardIndex+1].name;
-
-            Console.log('hide all layers belonging to other artboards (by name)');
-            for(var i = 0; i < artboards.length; i++) {
-                if (artboards[0].name == artboards[i].name) continue;
-                var name = doc.artboards[i].name;
-                Ai.hideLayerByName(doc, name);
-            };
         }
 
 
