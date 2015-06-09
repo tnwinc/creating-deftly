@@ -47,9 +47,9 @@ var transformErrorObject = function(e) {
 
     return (name + _ + number +
         "\n" + fileName + _ +
-        "\n" + "   " + (line + start) + _ + linesOfCode[line + start] +
-        "\n" + " ! " + (line) + _ + linesOfCode[line] + " //" + message +
-        "\n" + "   " + (line - end) + _ + linesOfCode[line - end]); 
+        "\n" + "   " + (line + start) + _ + linesOfCode[line + start-1] +
+        "\n" + " ! " + (line) + _ + linesOfCode[line-1] + " //" + message +
+        "\n" + "   " + (line - end) + _ + linesOfCode[line - end-1]); 
 }
 
 
