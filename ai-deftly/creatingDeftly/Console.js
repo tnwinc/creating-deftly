@@ -32,12 +32,33 @@ var writeToFile = function(fileName, string) {
     file.writeln('\n' + activeDoc + displayTime + string);
 };
 
+var transformErrorObject = function(e) {
+    var number      = e.number;      //Illustrator's error code for this error
+    var fileName    = e.fileName;    //the full path to the problem file
+    var line        = e.line;        //Line number where error occured
+    var source      = e.source;      //this is the entire source script
+    var start       = e.start;       //The line relative to the error line that the problem started
+    var end         = e.end;         //same as above but reversed
+    var message     = e.message;     //same as description
+    var name        = e.name;        //just error
+    var description = e.description; //same as message
+    var _ = ' ';
+    var linesOfCode = source.split("\n");
+
+    return (name + _ + number +
+        "\n" + fileName + _ +
+        "\n" + "   " + (line + start) + _ + linesOfCode[line + start] +
+        "\n" + " ! " + (line) + _ + linesOfCode[line] + " //" + message +
+        "\n" + "   " + (line - end) + _ + linesOfCode[line - end]); 
+}
+
 
 this.module.Console = {
     log  : function(string) {
         writeToFile("adobe.log", string);
     },
     error: function(string) {
+        if (string.message) string = transformErrorObject(string)
         writeToFile("adobe.err", string);
         app.quit();
     },

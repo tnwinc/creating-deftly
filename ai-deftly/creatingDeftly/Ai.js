@@ -361,7 +361,7 @@ this.module.Ai = {
         doc.saveAs( fileSpec, exportOptions );
     },
     exportAI        : function(doc, dest, artboardIndex){
-        //make a duplicate of the desired artboard at the zero index
+        Console.log('make a duplicate of the desired artboard at the zero index');
         if (artboardIndex != null && artboardIndex != undefined) {
             Ensure((typeof artboardIndex) === 'number', 'exportAi:@artboardIndex: ' + artboardIndex + ' must be an integer');
             var artboards = doc.artboards;
