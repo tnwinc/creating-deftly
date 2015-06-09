@@ -361,8 +361,8 @@ this.module.Ai = {
         doc.saveAs( fileSpec, exportOptions );
     },
     exportAI        : function(doc, dest, artboardIndex){
-        Console.log('make a duplicate of the desired artboard at the zero index');
         if (artboardIndex != null && artboardIndex != undefined) {
+            Console.log('make a duplicate of the desired artboard at the zero index');
             Ensure((typeof artboardIndex) === 'number', 'exportAi:@artboardIndex: ' + artboardIndex + ' must be an integer');
             var artboards = doc.artboards;
             Ensure(artboardIndex < artboards.length, 'exportAi:@artboardIndex: ' + artboardIndex + ' must be a valid 0 based index. ' + doc + ' has ' + artboards.length + ' artboards. A valid input would be any integer between 0-' + artboards.length-1);
@@ -370,11 +370,13 @@ this.module.Ai = {
             var rect = artboard.artboardRect;
             artboards.insert(rect, 0);
             artboards[0].name = artboards[artboardIndex+1].name;
-            Obj(artboards).forEach(function(ab, i) {
-                if (artboards[0].name == artboards[i].name) return;
+
+            Console.log('hide all layers belonging to other artboards (by name)');
+            for(var i = 0; i < artboards.length; i++) {
+                if (artboards[0].name == artboards[i].name) continue;
                 var name = doc.artboards[i].name;
                 Ai.hideLayerByName(doc, name);
-            });
+            };
         }
 
 
@@ -412,6 +414,7 @@ this.module.Ai = {
                 break;
             case 'AI':
                 this.exportAI(doc, dest, artboardIndex);
+                break;
             default:
                 this.exportJPEG(doc, dest, realScale);
                 break;
