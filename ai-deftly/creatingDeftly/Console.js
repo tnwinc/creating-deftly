@@ -44,6 +44,8 @@ var transformErrorObject = function(e) {
     var description = e.description; //same as message
     var _ = ' ';
     var linesOfCode = source.split("\n");
+    if (start == 0) start = -1;
+    if (end == 0) end = -1;
 
     return (name + _ + number +
         "\n" + fileName + _ +
