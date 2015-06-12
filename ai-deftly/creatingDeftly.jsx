@@ -3,9 +3,10 @@
 //
 //    Determin current working directory--
 //
+
 var srcPath = undefined;
 //var winPathCC   = "/c/Program Files/Adobe/Adobe lllustratorCC/Startup Scripts/creatingDeftly/";
-var winPath2014 = "/c/Program Files/Adobe/Adobe lllustrator CC 2014/Startup Scripts/creatingDeftly/";
+var winPath2014 = "/c/Program%20Files/Adobe/Adobe%20Illustrator%20CC%202014/Startup%20Scripts/creatingDeftly/";
 //var osxPathCC   = "/Applications/Adobe lllustrator CC 2014/Startup Scripts/creatingDeftly/";
 var osxPath2014 = "/Applications/Adobe Illustrator CC 2014/Startup Scripts/creatingDeftly/";
 
@@ -26,8 +27,7 @@ if (srcPath == undefined) throw("Unknown OS or unsupported version of Adobe Illu
 //
 var module = {};
 function require(fileName, alias){
-    var reqFile = new File(osxPath2014 + fileName);
-    //alert(reqFile.exists)
+    var reqFile = new File(srcPath + fileName);
     reqFile.open("r");
     var js = reqFile.read();
     eval(js);
