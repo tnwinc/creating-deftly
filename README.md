@@ -1,5 +1,4 @@
-# Creating Deftly
-<img src="https://github.com/tnwinc/creating-deftly/blob/master/resources/artwork/CreatingDeftly_Logo.png" alt="creating-deftly logo" height="120">
+<img src="https://github.com/tnwinc/creating-deftly/blob/master/resources/artwork/CreatingDeftly_Logo.png" alt="creating-deftly logo" height="120"> # Creating Deftly
 
 
 **Creating Deftly** is an open source project devoted to making automation of Adobe products easier with a unified API, chainable commands, and in-app gui tools.
