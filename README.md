@@ -1,5 +1,4 @@
-| <img src="https://github.com/tnwinc/creating-deftly/blob/master/resources/artwork/CreatingDeftly_Logo.png" alt="creating-deftly logo" height="120"> |
-|:--:|
+<img src="https://github.com/tnwinc/creating-deftly/blob/master/resources/artwork/CreatingDeftly_Logo.png" alt="creating-deftly logo" height="120">
 
 # Creating Deftly
 
