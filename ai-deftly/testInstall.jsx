@@ -15,6 +15,6 @@ var test = function() {
 }
 
 if (test()) {
-    //alert("Creating Deftly installed successfully");
+    alert("Creating Deftly installed successfully!");
     app.quit();
 }

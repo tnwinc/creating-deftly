@@ -13,13 +13,22 @@ if os == 'WIN'
 	osPath = "C:/Program Files/Adobe/Adobe Illustrator CC 2014/Startup Scripts/"
 end
 
-if Dir.exists?(osPath)
-    puts "working in #{osPath}"
-    puts "removing any old installations"
-    FileUtils.rm_r(Dir.glob("#{osPath}creatingDeftly*"))
-else
-    Dir.mkdir osPath
-    puts "created Startup Scripts folder in \n#{osPath}"
+begin
+    if Dir.exists?(osPath)
+        puts "working in #{osPath}"
+        puts "removing any old installations"
+        FileUtils.rm_r(Dir.glob("#{osPath}creatingDeftly*"))
+    else
+        Dir.mkdir osPath
+        puts "created Startup Scripts folder in \n#{osPath}"
+    end
+rescue
+    if os == 'WIN'
+        puts "ERROR: Permissions denied\nYou must first launch your shell as an administrator!\nAborting"
+        abort
+    else
+        puts "ERROR: Permissions denied\nTry using sudo\nAborting"
+    end
 end
 
 puts "copying in new installation"
@@ -33,6 +42,6 @@ if os == 'OSX'
 	puts "Creating Deftly installed successfully!"
 end
 if os == 'WIN'
-	`Invoke-Item #{test_file_path.gsub('/', '\\')}`
-	puts "Creating Deftly installed successfully!"
+    `start #{test_file_path.gsub(/\//, '\\')}`
+	# puts "Creating Deftly installed successfully!"
 end
