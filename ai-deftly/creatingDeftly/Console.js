@@ -29,7 +29,7 @@ var writeToFile = function(fileName, string) {
     } else {
         file.open('a');
     }
-    file.writeln('\n' + activeDoc + displayTime + string);
+    file.writeln('\n' + activeDoc + displayTime + string + '\n--' + srcPath);
 };
 
 var transformErrorObject = function(e) {

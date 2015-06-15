@@ -419,8 +419,9 @@ this.module.Ai = {
         } else {
             colorSpace = DocumentColorSpace[colorSpace.toUpperCase()];
         }
-        file = new File(filePath, colorSpace);
-        app.open(file);
+        file = new File(filePath);
+        Ensure(file.exists, 'Ai.openFile: The file (' + filePath + ') must exist.');
+        app.open(file, colorSpace);
         return this.getDoc();
     },
     save            : function(doc) {
