@@ -43,4 +43,4 @@ var Ensure     = require("Ensure.js", "Ensure");
 var Obj        = require("Obj.js", "Obj");
 var JSON       = require("json2.js", "JSON");
 var Ai         = require("Ai.js", "Ai");
-var string     = require("string.js", "string");
+var Str        = require("Str.js", "Str");
