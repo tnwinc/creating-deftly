@@ -14,12 +14,12 @@ var getActiveDocument = function() {
     }
 };
 
-var writeToFile = function(fileName, string) {
+var writeToFile = function(fileName, string, path) {
     //'w' = writing/overwriting; 'a' = appending; 'r' = reading;
     var time = new Date();
     var displayTime = ((time.getMonth()+1)+'/'+time.getDate()+'/'+time.getFullYear()+' ['+time.getHours()+':'+time.getMinutes()+':'+time.getSeconds()+']\n');
     var doc = getActiveDocument();
-    var srcPath = doc.path;
+    var srcPath = path || doc.path;
     var activeDoc = doc.name + ': ';
     var filePath = (srcPath + '/' + fileName);
     var file = File(filePath);
@@ -52,16 +52,17 @@ var transformErrorObject = function(e) {
         "\n" + "   " + (line + start) + _ + linesOfCode[line + start-1] +
         "\n" + " ! " + (line) + _ + linesOfCode[line-1] + " //" + message +
         "\n" + "   " + (line - end) + _ + linesOfCode[line - end-1]); 
-}
-
+};
 
 this.module.Console = {
     log  : function(string) {
+        $.writeln(string);
         writeToFile("adobe.log", string);
     },
     error: function(string) {
-        if (string.message) string = transformErrorObject(string)
+        if (string.message) string = transformErrorObject(string);
+        $.writeln(string);
         writeToFile("adobe.err", string);
         app.quit();
-    },
+    }
 };

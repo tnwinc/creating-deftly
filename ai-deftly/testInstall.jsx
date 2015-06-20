@@ -11,6 +11,7 @@ var test = function() {
     if (!Obj) return moduleNotFound("Obj");
     if (!JSON) return moduleNotFound("JSON");
     if (!Ai) return moduleNotFound("Ai");
+    if (!string) return moduleNotFound("string");
     return true;
 }
 

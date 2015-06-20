@@ -627,5 +627,5 @@ this.module.Ai = {
             symbol.name = name;
         }
         return(symbol);
-    },
+    }
 };
