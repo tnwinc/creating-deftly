@@ -6,7 +6,7 @@ describe('Str.js', function() {
             var day = 'Friday';
             var testString = Str('Hey %1, how\'d you do on your %2 last %3?', name, challenge, day);
             var expectedString = 'Hey John, how\'d you do on your exam last Friday?';
-            
+
             expect(testString).to.equal(expectedString);
             expect(testString).to.not.equal('Hey %1, how\'d you do on your %2 last %3?');
         });
@@ -23,7 +23,7 @@ describe('Str.js', function() {
             expect(testString).to.be(expectedString);
         });
     });
-
+    trace('123');
     describe('When there are %# but no extra arguments provided', function() {
         it('should return the string exactly as it was typed', function() {
             var testString = Str('Hey %1, how\'d you do on your %2 last %3?');
