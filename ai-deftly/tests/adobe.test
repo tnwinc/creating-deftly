@@ -1,1 +1,22 @@
-Running Illustrator Tests: 6/22/2015 [9:0:32]Str.js --    When %# and interpolation arguments are provided --        It should return an interpolated string: [9:0:32]            PASS            PASS    --    When no %# are provided but extra arguments are provided --        It should return the string without interpolation: [9:0:32]            PASS    --    When there are %# but no extra arguments provided --        It should return the string exactly as it was typed: [9:0:32]            PASS            PASS    ----
+Running Illustrator Tests: 6/22/2015 [16:37:38]
+
+Str.js --
+    When %# and interpolation arguments are provided --
+        It should return an interpolated string: [16:37:38]
+            PASS
+            PASS
+    --
+
+    When no %# are provided but extra arguments are provided --
+        It should return the string without interpolation: [16:37:38]
+            PASS
+    --
+
+    When there are %# but no extra arguments provided --
+        It should return the string exactly as it was typed: [16:37:38]
+            PASS
+            PASS
+    --
+
+--
+
