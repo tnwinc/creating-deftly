@@ -8,17 +8,14 @@ if path.include? "\\"
     os = 'WIN'
 end
 
-osPath = '/Applications/Adobe Illustrator CC 2014/Startup Scripts/'
-if os == 'WIN'
-    osPath = "C:/Program Files/Adobe/Adobe Illustrator CC 2014/Startup Scripts/"
-end
-
 working_directory = Dir.pwd
 test_files_path = "#{working_directory}/tests/"
+test_file_path = "#{test_files_path}/testingDeftly.jsx"
+test_log_path = "#{test_files_path}/adobe.test"
 puts "running tests..."
 if os == 'OSX'
-    `open -W -F -b com.adobe.illustrator #{test_file_path}`
-    puts "Creating Deftly installed successfully!"
+    `open #{test_file_path}`
+    system( "tail -f -n +1 #{test_log_path}" )
 end
 if os == 'WIN'
     `start #{test_file_path.gsub(/\//, '\\')}`

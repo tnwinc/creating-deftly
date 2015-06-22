@@ -1,4 +1,4 @@
-describe('string.js', function() {
+describe('Str.js', function() {
     describe('When %# and interpolation arguments are provided', function() {
         it('should return an interpolated string', function() {
             var name = 'John';
@@ -6,7 +6,7 @@ describe('string.js', function() {
             var day = 'Friday';
             var testString = Str('Hey %1, how\'d you do on your %2 last %3?', name, challenge, day);
             var expectedString = 'Hey John, how\'d you do on your exam last Friday?';
-
+            
             expect(testString).to.equal(expectedString);
             expect(testString).to.not.equal('Hey %1, how\'d you do on your %2 last %3?');
         });
