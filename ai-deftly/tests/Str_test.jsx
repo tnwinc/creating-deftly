@@ -23,7 +23,7 @@ describe('Str.js', function() {
             expect(testString).to.be(expectedString);
         });
     });
-    trace('123');
+    
     describe('When there are %# but no extra arguments provided', function() {
         it('should return the string exactly as it was typed', function() {
             var testString = Str('Hey %1, how\'d you do on your %2 last %3?');

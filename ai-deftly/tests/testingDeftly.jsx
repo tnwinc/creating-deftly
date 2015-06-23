@@ -80,7 +80,7 @@ var it = function(description, cb) {
 
 var expect = function(test) {
     var logResult = function(result, operator, got) {
-        if (result) writeToTestLogs(spaces(tabSize) + 'PASS');
+        if (result) writeToTestLogs(spaces(tabSize) + '✔ PASS');
         else {
             writeToTestLogs(spaces(tabSize) + 'FAIL ' + time());
             writeToTestLogs(spaces(tabSize) + 'Expected    : [' + test + ']');
