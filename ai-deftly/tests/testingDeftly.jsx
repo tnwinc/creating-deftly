@@ -22,7 +22,7 @@ if (!testInstall()) {
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
 var time = function() {
     var time = new Date();
-    return ('['+time.getHours()+':'+time.getMinutes()+':'+time.getSeconds()+']');
+    return ('('+time.getHours()+':'+time.getMinutes()+':'+time.getSeconds()+')');
 };
 var date = function() {
     var date = new Date();
@@ -47,19 +47,27 @@ testLogs.lineFeed = "Unix";
 // txtFile.lineFeed = "Windows";
 // txtFile.lineFeed = "Macintosh";
 testLogs.open('w');
-testLogs.writeln('Running Illustrator Tests: ' + date() + spaces(1) + time() + '\n');
+testLogs.writeln('');
 testLogs.close();
 
 var describes = [];
 var its = [];
+var passing = 0;
+var pending = 0;
+var failing = 0;
 var writeToTestLogs = function(string) {
     testLogs.open('a');
     testLogs.writeln(spaces(describes.length * tabSize) + string);
     testLogs.close();
 };
 var trace = function(string) {
-    writeToTestLogs(spaces(tabSize) + '--' + string);
+    writeToTestLogs('testingDeftly-- ' + string);
 };
+var printResults = function() {
+    writeToTestLogs(spaces(tabSize) + passing + ' passing');
+    if (pending) writeToTestLogs(spaces(tabSize) + pending + ' pending');
+    if (failing) writeToTestLogs(spaces(tabSize) + failing + ' failing');
+}
 
 var xdescribe = function() {};
 var describe = function(description, cb) {
@@ -70,7 +78,7 @@ var describe = function(description, cb) {
     writeToTestLogs('--\n');
 };
 
-var xit = function() {};
+var xit = function() {pending++};
 var it = function(description, cb) {
     writeToTestLogs('It ' + description + ': ' + time());
     its.push(description);
@@ -80,9 +88,12 @@ var it = function(description, cb) {
 
 var expect = function(test) {
     var logResult = function(result, operator, got) {
-        if (result) writeToTestLogs(spaces(tabSize) + '✔ PASS');
-        else {
-            writeToTestLogs(spaces(tabSize) + 'FAIL ' + time());
+        if (result) {
+            passing++;
+            writeToTestLogs(spaces(tabSize) + '✔ PASS');
+        } else {
+            failing++;
+            writeToTestLogs(spaces(tabSize) + '✘ FAIL ' + time());
             writeToTestLogs(spaces(tabSize) + 'Expected    : [' + test + ']');
             writeToTestLogs(spaces(tabSize) + operator + '[' + got + ']');
         }
@@ -108,6 +119,11 @@ var expect = function(test) {
     };
 };
 
+trace('Running Illustrator Tests: ' + date() + spaces(1) + time() + '\n');
+
 #include 'Str_test.jsx'
+
+trace('finished running tests');
+printResults();
 
 app.quit();
