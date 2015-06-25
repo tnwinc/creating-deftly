@@ -69,50 +69,85 @@ var printResults = function() {
     if (failing) writeToTestLogs(spaces(tabSize) + failing + ' failing');
 }
 
-var xdescribe = function() {};
+var xdescribe = function(description, cb) {
+    writeToTestLogs('xdescribe ' + description + ' ~~');
+    writeToTestLogs('\n');
+};
 var describe = function(description, cb) {
-    writeToTestLogs(description + ' --');
+    writeToTestLogs('Describe ' + description + ' --');
     describes.push(description);
     cb();
     describes.pop();
     writeToTestLogs('--\n');
 };
 
-var xit = function() {pending++};
+var xit = function(description, cb) {
+    pending++
+    writeToTestLogs('xIt ' + description + ' ~~');
+};
 var it = function(description, cb) {
-    writeToTestLogs('It ' + description + ': ' + time());
-    its.push(description);
+    //writeToTestLogs('It ' + description + ': ' + time());
+    its.push({
+        description: description,
+        tests      : []
+    });
     cb();
+    var passing = '✔ It ';
+    var index = its.length-1;
+    var results = its[index].tests;
+    var tests = [];
+
+    for (i=0; i<results.length; i++) {
+        if (results[i].passed) {
+            tests.push(spaces(tabSize) + '✔ ' + results[i].time);
+        } else {
+            passing = '✘ It ';
+            tests.push(spaces(tabSize) + '✘ ' + results[i].time);
+            tests.push(spaces(tabSize*2) + 'Expected    : [' + results[i].expected + ' ]');
+            tests.push(spaces(tabSize*2) + results[i].operator + '[ ' +  results[i].got + ' ]');
+        }
+    }
+    
+    writeToTestLogs(passing + description + ': ' + time());
+    if (results.length > 1 || !passing) {
+        for (i=0; i<tests.length; i++) {
+            writeToTestLogs(tests[i]);
+        }
+    }
     its.pop();
 };
 
 var expect = function(test) {
     var logResult = function(result, operator, got) {
+        var index = its.length-1;
         if (result) {
             passing++;
-            writeToTestLogs(spaces(tabSize) + '✔ PASS');
         } else {
             failing++;
-            writeToTestLogs(spaces(tabSize) + '✘ FAIL ' + time());
-            writeToTestLogs(spaces(tabSize) + 'Expected    : [' + test + ']');
-            writeToTestLogs(spaces(tabSize) + operator + '[' + got + ']');
         }
+        its[index].tests.push({
+            passed  : result,
+            expected: test,
+            operator: operator,
+            got     : got,
+            time    : time()
+        });
     };
 
     return {
         to: {
             be: function(expected) {
-                logResult(test === expected, 'to be       : ', expected);
+                return logResult(test === expected, 'to be       : ', expected);
             },
             equal: function(expected) {
-                logResult(test == expected, 'to equal    : ', expected);
+                return logResult(test == expected, 'to equal    : ', expected);
             },
             not: {
                 be: function(unexpected) {
-                        logResult(test !== unexpected, 'to NOT be   : ', unexpected);
+                        return logResult(test !== unexpected, 'to NOT be   : ', unexpected);
                 },
                 equal: function(unexpected) {
-                        logResult(test != unexpected, 'to NOT equal: ', unexpected);
+                        return logResult(test != unexpected, 'to NOT equal: ', unexpected);
                 }
             }
         }

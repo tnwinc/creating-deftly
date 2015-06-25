@@ -1,27 +1,26 @@
 
-testingDeftly-- Running Illustrator Tests: 6/23/2015 (18:19:13)
+testingDeftly-- Running Illustrator Tests: 6/24/2015 (20:21:50)
 
-Str.js --
-    When %# and interpolation arguments are provided --
-        It should return an interpolated string: (18:19:13)
-            ✔ PASS
-            ✔ PASS
+Describe Str.js --
+    Describe when %# and interpolation arguments are provided --
+        ✔ It should return an interpolated string: (20:21:50)
+        ✔ It should not return the string exactly as is was sent: (20:21:50)
     --
 
-    When no %# are provided but extra arguments are provided --
+    Describe when no %# are provided but extra arguments are provided --
+        ✔ It should return the string without interpolation: (20:21:50)
     --
 
-    When there are %# but no extra arguments provided --
-        It should return the string exactly as it was typed: (18:19:13)
-            ✘ FAIL (18:19:13)
-            Expected    : [Hey %1, how'd you do on your %2 last %3?]
-            to equal    : [Hey %1, how'd you do on your %2 last %3?1]
-            ✔ PASS
+    Describe when there are %# but no extra arguments provided --
+        ✘ It should return the string exactly as it was typed: (20:21:50)
+            ✘ (20:21:50)
+                Expected    : [Hey %1, how'd you do on your %2 last %3? ]
+                to equal    : [ Hey %1, how'd you do on your %2 last %3?1 ]
+            ✔ (20:21:50)
     --
 
 --
 
 testingDeftly-- finished running tests
-    3 passing
-    1 pending
+    4 passing
     1 failing
