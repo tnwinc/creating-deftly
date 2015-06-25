@@ -92,24 +92,24 @@ var it = function(description, cb) {
         tests      : []
     });
     cb();
-    var passing = '✔ It ';
     var index = its.length-1;
     var results = its[index].tests;
+    var passing = '✔ It ';
     var tests = [];
 
     for (i=0; i<results.length; i++) {
         if (results[i].passed) {
-            tests.push(spaces(tabSize) + '✔ ' + results[i].time);
+            tests.push(spaces(tabSize) + (i+1) + ' ✔ ' + results[i].time);
         } else {
             passing = '✘ It ';
-            tests.push(spaces(tabSize) + '✘ ' + results[i].time);
-            tests.push(spaces(tabSize*2) + 'Expected    : [' + results[i].expected + ' ]');
-            tests.push(spaces(tabSize*2) + results[i].operator + '[ ' +  results[i].got + ' ]');
+            tests.push(spaces(tabSize) + (i+1) + ' ✘ ' + results[i].time);
+            tests.push(spaces(tabSize*2) + 'Expected    : [ ' + results[i].got + ' ]');
+            tests.push(spaces(tabSize*2) + results[i].operator + '[ ' +  results[i].expected + ' ]');
         }
     }
     
     writeToTestLogs(passing + description + ': ' + time());
-    if (results.length > 1 || !passing) {
+    if (passing == '✘ It ' || results.length > 1) {
         for (i=0; i<tests.length; i++) {
             writeToTestLogs(tests[i]);
         }

@@ -25,13 +25,13 @@ if os == 'OSX'
 tail -f -n +1 #{test_log_path} | sed -E \"
 s:(\\\[[^\]]+\]):`echo '\033[35m&\033[0m'`:g;
 s:(\\\([^)]+\)):`echo '\033[30m&\033[0m'`:g;
-s:(✔ [^<]+\\\: )|(✔):`echo '\033[32m&\033[0m'`:g;
-s:(✘ [^<]+\\\: )|(✘):`echo '\033[31m&\033[0m'`:g;
+s:(✔ [^<]+\\\: )|(✔)|([0-9] ✔):`echo '\033[32m&\033[0m'`:g;
+s:(✘ [^<]+\\\: )|(✘)|([0-9] ✘):`echo '\033[31m&\033[0m'`:g;
 s:(testingDeftly--):`echo '\033[30m&\033[0m'`:g;
 s:([0-9]+ passing):`echo '\033[32m&\033[0m'`:g;
 s:([0-9]+ pending):`echo '\033[36m&\033[0m'`:g;
 s:([0-9]+ failing):`echo '\033[31m&\033[0m'`:g;
-s:(Expected)|(to equal):`echo '\033[30m&\033[0m'`:g;
+s:(Expected)|(to equal)|(to be)|(to NOT equal)|(to NOT be):`echo '\033[30m&\033[0m'`:g;
 s:(Describe[^--]+--)|(--):`echo '\033[34m&\033[0m'`:g;
 s:(xdescribe[^~~]+~~)|(xIt[^~~]+~~):`echo '\033[36m&\033[0m'`:g;
 \"

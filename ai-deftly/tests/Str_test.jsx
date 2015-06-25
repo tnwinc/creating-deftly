@@ -37,7 +37,7 @@ describe('Str.js', function() {
             var testString = Str('Hey %1, how\'d you do on your %2 last %3?');
             var expectedString = 'Hey %1, how\'d you do on your %2 last %3?';
 
-            expect(testString).to.equal(expectedString+1);
+            expect(testString).to.equal(expectedString);
             expect(testString).to.not.equal('Hey , how\'d you do on your  last ?');
         });
     })
