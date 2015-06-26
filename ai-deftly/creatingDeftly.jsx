@@ -30,6 +30,7 @@ function require(fileName, alias){
     var reqFile = new File(srcPath + fileName);
     reqFile.open("r");
     var js = reqFile.read();
+    reqFile.close();
     eval(js);
     return this.module[alias];
 }

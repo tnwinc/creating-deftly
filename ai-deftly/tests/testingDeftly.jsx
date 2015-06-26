@@ -19,6 +19,7 @@ if (!testInstall()) {
     app.quit();
 }
 
+var os = Folder.fs //Windows, Macintosh, or Unix. (Use $.os for a more verbose description with version nuumbers)
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
 var time = function() {
     var time = new Date();
@@ -109,7 +110,7 @@ var printResults = function() {
 
 var startTime;
 var xdescribe = function(description, cb) {
-    writeToTestLogs('xdescribe ' + description + ' ~~');
+    writeToTestLogs('xDescribe ' + description + ' ~~');
     writeToTestLogs('\n');
 };
 var describe = function(description, cb) {
@@ -199,7 +200,16 @@ var expect = function(test) {
 startTime = time();
 trace('Running Illustrator Tests: ' + date() + spaces(1) + startTime.standard + '\n');
 
-#include 'Str_test.jsx'
+tests = workingDirectory.getFiles("*.aispec");
+var runTest = function(index) {
+    var test = tests[index];
+    test.open("r");
+    var js = test.read();
+    test.close();
+    eval(js);
+    return;
+};
+for (var t in tests) {runTest(t)}
 
 var finalTime = time();
 trace('finished running tests ' + finalTime.diff(startTime));

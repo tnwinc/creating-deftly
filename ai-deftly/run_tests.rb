@@ -32,7 +32,7 @@ s:([0-9]+ pending):`echo '\033[36m&\033[0m'`:g;
 s:([0-9]+ failing):`echo '\033[31m&\033[0m'`:g;
 s:(Expected)|(to equal)|(to be)|(to NOT equal)|(to NOT be):`echo '\033[30m&\033[0m'`:g;
 s:(Describe[^--]+--)|(--):`echo '\033[34m&\033[0m'`:g;
-s:(xdescribe[^~~]+~~)|(xIt[^~~]+~~):`echo '\033[36m&\033[0m'`:g;
+s:(xDescribe[^~~]+~~)|(xIt[^~~]+~~):`echo '\033[36m&\033[0m'`:g;
 \"
     """ )
 # Color escape code reference: https://en.wikipedia.org/wiki/ANSI_escape_code

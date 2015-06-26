@@ -1,0 +1,13 @@
+describe('Obj.js', function() {
+    describe('isObject', function() {
+        var testObj = Obj({}).isObject();
+        var testArr = Obj([]).isObject();
+        var testStr = Obj('').isObject();
+
+        it('should only return true for objects', function() {
+            expect(testObj).to.be(true);
+            expect(testArr).to.be(false);
+            expect(testStr).to.be(false);
+        });
+    });
+});
