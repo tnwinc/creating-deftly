@@ -18,7 +18,6 @@ log_file = File.new("#{test_log_path}", "w+")
 log_file.puts('')
 log_file.close
 
-# s:([0-9]+):`echo '\033[36m&\033[0m'`:g; #Math numbers
 if os == 'OSX'
     `open #{test_file_path}`
     system( """

@@ -1,26 +1,22 @@
 describe('Str.js', function() {
     describe('when %# and interpolation arguments are provided', function() {
-        it('should return an interpolated string', function() {
             var name = 'John';
             var challenge = 'exam';
             var day = 'Friday';
             var testString = Str('Hey %1, how\'d you do on your %2 last %3?', name, challenge, day);
             var expectedString = 'Hey John, how\'d you do on your exam last Friday?';
 
+        it('should return an interpolated string', function() {
             expect(testString).to.equal(expectedString);
         });
-        it('should not return the string exactly as is was sent', function() {
-            var name = 'John';
-            var challenge = 'exam';
-            var day = 'Friday';
-            var testString = Str('Hey %1, how\'d you do on your %2 last %3?', name, challenge, day);
-            var expectedString = 'Hey John, how\'d you do on your exam last Friday?';
 
+        it('should not return the string exactly as is was sent', function() {
             expect(testString).to.not.equal('Hey %1, how\'d you do on your %2 last %3?');
         });
     });
 
     describe('when no %# are provided but extra arguments are provided', function() {
+        Ai.openFile("~/Desktop/test.ai");
         it('should return the string without interpolation', function() {
             var name = 'John';
             var challenge = 'exam';
