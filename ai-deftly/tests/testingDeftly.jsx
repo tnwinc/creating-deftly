@@ -20,40 +20,48 @@ if (!testInstall()) {
 }
 
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
-var lastTime = undefined;
 var time = function() {
     var time = new Date();
     var _hour        = time.getHours();
     var _minute      = time.getMinutes();
     var _second      = time.getSeconds();
     var _millisecond = time.getMilliseconds();
+    var _inMilliseconds = Date.now();
     result = {
-        hour       : _hour,
-        minute     : _minute,
-        second     : _second,
-        millisecond: _millisecond,
-        standard   : ('('+_hour+':'+_minute+':'+_second+')'),
-        full       : ('('+_hour+':'+_minute+':'+_second+':'+_millisecond+')')
+        hour          : _hour,
+        minute        : _minute,
+        second        : _second,
+        millisecond   : _millisecond,
+        standard      : ('('+_hour+':'+_minute+':'+_second+')'),
+        full          : ('('+_hour+':'+_minute+':'+_second+':'+_millisecond+')'),
+        inMilliseconds: _inMilliseconds,
+        diff          : function(oldTime, newTime) {
+            var newTime = newTime || _inMilliseconds;
+            var timeDiff = newTime - oldTime.inMilliseconds;
+
+            var hours   = (1000*60*60);
+            var minutes = (1000*60);
+            var seconds = (1000);
+
+            var format = function(value, part) {
+                if (part == 'm' && value == 000) return '0m';
+                if (value > 0) return (value+part);
+                else return '';
+            }
+
+            var hoursDiff        = format(Math.floor(timeDiff/hours), 'h');
+            var modHours         = timeDiff%hours;
+            var minutesDiff      = format(Math.floor(modHours/minutes), 'min');
+            var modMinutes       = modHours%minutes;
+            var secondsDiff      = format(Math.floor(modMinutes/seconds), 's');
+            var millisecondsDiff = format(modMinutes%seconds, 'm');
+
+            return "(+"+hoursDiff+minutesDiff+secondsDiff+millisecondsDiff+")";
+        }
     };
-    lastTime = result;
     return result;
 }
-lastTime = time();
-var timeDiff = function(timeToCompare) {
-    var oldTime = timeToCompare || lastTime;
-    var newTime = time();
-    lastTime = newTime;
-    alert(oldTime.millisecond + '\n' + lastTime.millisecond);
-    var hourDiff = oldTime.hour        - newTime.hour;
-    var minDiff  = oldTime.minute      - newTime.minute;
-    var secDiff  = oldTime.second      - newTime.second;
-    var milDiff  = oldTime.millisecond - newTime.millisecond;
-    if (hourDiff > 0) {hourDiff += 'hr'}else{hourDiff = ''};
-    if (minDiff  > 0) {minDiff  += 'min'}else{minDiff = ''};
-    if (secDiff  > 0) {secDiff  += 's'}else{secDiff = ''};
-    if (milDiff  > 0) {milDiff  += 'm'}else{milDiff = '0m'};
-    return "(+"+hourDiff+minDiff+secDiff+milDiff+")";
-};
+
 var date = function() {
     var date = new Date();
     return ((date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear());
@@ -99,6 +107,7 @@ var printResults = function() {
     if (failing) writeToTestLogs(spaces(tabSize) + failing + ' failing');
 }
 
+var startTime;
 var xdescribe = function(description, cb) {
     writeToTestLogs('xdescribe ' + description + ' ~~');
     writeToTestLogs('\n');
@@ -106,9 +115,11 @@ var xdescribe = function(description, cb) {
 var describe = function(description, cb) {
     writeToTestLogs('Describe ' + description + ' --');
     describes.push(description);
+    var describeStartTime = time();
     cb();
+    var describeFinalTime = time();
     describes.pop();
-    writeToTestLogs('--\n');
+    writeToTestLogs('-- ' + describeFinalTime.diff(describeStartTime) + '\n');
 };
 
 var xit = function(description, cb) {
@@ -120,8 +131,9 @@ var it = function(description, cb) {
         description: description,
         tests      : []
     });
-    time();
+    var itStartTime = time();
     cb();
+    var itFinalTime = time();
     var index = its.length-1;
     var results = its[index].tests;
     var passing = '✔ It ';
@@ -129,16 +141,16 @@ var it = function(description, cb) {
 
     for (i=0; i<results.length; i++) {
         if (results[i].passed) {
-            tests.push(spaces(tabSize) + (i+1) + ' ✔ ' + timeDiff());
+            tests.push(spaces(tabSize) + (i+1) + ' ✔ ' + results[i].time.diff(itStartTime));
         } else {
             passing = '✘ It ';
-            tests.push(spaces(tabSize) + (i+1) + ' ✘ ' + timeDiff());
+            tests.push(spaces(tabSize) + (i+1) + ' ✘ ' + results[i].time.diff(itStartTime));
             tests.push(spaces(tabSize*2) + 'Expected    : [ ' + results[i].got + ' ]');
             tests.push(spaces(tabSize*2) + results[i].operator + '[ ' +  results[i].expected + ' ]');
         }
     }
     
-    writeToTestLogs(passing + description + ': ' + timeDiff());
+    writeToTestLogs(passing + description + ': ' + itFinalTime.diff(itStartTime));
     if (passing == '✘ It ' || results.length > 1) {
         for (i=0; i<tests.length; i++) {
             writeToTestLogs(tests[i]);
@@ -160,6 +172,7 @@ var expect = function(test) {
             expected: test,
             operator: operator,
             got     : got,
+            time    : time()
         });
     };
 
@@ -183,9 +196,13 @@ var expect = function(test) {
     };
 };
 
-trace('Running Illustrator Tests: ' + date() + spaces(1) + time().standard + '\n');
+startTime = time();
+trace('Running Illustrator Tests: ' + date() + spaces(1) + startTime.standard + '\n');
 
 #include 'Str_test.jsx'
 
-trace('finished running tests ' + time().standard);
+var finalTime = time();
+trace('finished running tests ' + finalTime.diff(startTime));
 printResults();
+
+app.quit();

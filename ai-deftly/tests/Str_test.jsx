@@ -16,7 +16,6 @@ describe('Str.js', function() {
     });
 
     describe('when no %# are provided but extra arguments are provided', function() {
-        Ai.openFile("~/Desktop/test.ai");
         it('should return the string without interpolation', function() {
             var name = 'John';
             var challenge = 'exam';
