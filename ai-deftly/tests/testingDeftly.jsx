@@ -21,8 +21,8 @@ if (!testInstall()) {
 
 var os = Folder.fs //Windows, Macintosh, or Unix. (Use $.os for a more verbose description with version nuumbers)
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
-var time = function() {
-    var time = new Date();
+var time = function(date) {
+    var time = date || new Date();
     var _hour        = time.getHours();
     var _minute      = time.getMinutes();
     var _second      = time.getSeconds();
@@ -74,7 +74,7 @@ var spaces = function(number) {
         number --;
     }
     return spaces;
-}
+};
 var tabSize = 4;
 
 var testLogsPath = workingDirectory + '/adobe.test';
@@ -85,9 +85,11 @@ testLogs.encoding = "UTF-8";
 testLogs.lineFeed = "Unix";
 // txtFile.lineFeed = "Windows";
 // txtFile.lineFeed = "Macintosh";
-testLogs.open('w');
-testLogs.writeln('');
-testLogs.close();
+var clearTestLogs = function() {
+    testLogs.open('w');
+    testLogs.writeln('');
+    testLogs.close();
+};
 
 var describes = [];
 var its = [];
@@ -197,22 +199,103 @@ var expect = function(test) {
     };
 };
 
-startTime = time();
-trace('Running Illustrator Tests: ' + date() + spaces(1) + startTime.standard + '\n');
+var setTimeout = function(func, time) {
+        $.sleep(time);
+        func();
+};
+var breaker = {value: 0};
+var setInterval = function(func, time, breaker) {
+    if (!breaker || !breaker.value) return;
+    while(breaker.value) {
+        $.sleep(time);
+        func();
+    }
+};
 
-tests = workingDirectory.getFiles("*.aispec");
-var runTest = function(index) {
-    var test = tests[index];
+watch = false;
+monitorCTRL = false;
+watchList = [];
+var updateBreaker = function() {
+    breaker.value = (watchList.length * monitorCTRL);
+};
+var watchListContains = function(item) {
+    var result = {
+        exists: false,
+        index : -1
+    };
+
+    for (var i = 0; i < watchList.length; i++) {
+        if (result.exists) return result;
+        result.index++;
+        if (watchList[i].name === item.name) {
+            result.exists = true;
+        }
+    }
+
+    if (!result.exists) result.index = -1;
+
+    return result;
+};
+var addToWatchList = function(item) {
+    if (!watchListContains(item).exists) watchList.push(item);
+    updateBreaker();
+};
+var removeFromWatchList = function(item) {
+    var index = watchListContains(item).index;
+    if (index > -1) watchList.splice(index, 1);
+    updateBreaker();
+};
+var watchFile, watchFolder = undefined;
+
+var runTest = function(test) {
+    watch = false;
     test.open("r");
     var js = test.read();
     test.close();
     eval(js);
+    if (watch && monitorCTRL) {
+        addToWatchList(test);
+        trace('watching: ' + test.name);
+    } else {
+        removeFromWatchList(test);
+    }
+    updateBreaker();
     return;
 };
-for (var t in tests) {runTest(t)}
 
-var finalTime = time();
-trace('finished running tests ' + finalTime.diff(startTime));
-printResults();
+var monitor;
+var run = function() {
+    clearTestLogs();
+    startTime = time();
+    trace('Running Illustrator Tests: ' + date() + spaces(1) + startTime.standard + '\n');
 
-app.quit();
+    tests = workingDirectory.getFiles("*.aispec");
+    for (var t in tests) {runTest(tests[t])}
+
+    var finalTime = time();
+    trace('finished running tests ' + finalTime.diff(startTime));
+    printResults();
+    if (!breaker.value) app.quit();
+    else {
+        trace('watching: ' + '\n    ' + watchList.join('\n    '));
+        monitor(watchList);
+    }
+};
+var monitor = function(list) {
+    var file = watchList[0];
+    var last = file.modified;
+    var now;
+    setInterval(function() {
+        now = file.modified;
+        if (last.getTime() == now.getTime()) trace('skip');
+        else {
+            trace('Updated ' + time().standard);
+            runTest(file);
+        }
+        last = now;
+    }, 1000, breaker);
+    app.quit();
+}
+
+
+run();

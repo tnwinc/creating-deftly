@@ -1,3 +1,7 @@
+watch = true;
+// watchFile = "~/Projects/creating-deftly/ai-deftly/creatingDeftly";
+// watchFolder = "~/Projects/creating-deftly/ai-deftly/creatingDeftly/Str.js";
+
 describe('Str.js', function() {
     describe('when %# and interpolation arguments are provided', function() {
             var name = 'John';

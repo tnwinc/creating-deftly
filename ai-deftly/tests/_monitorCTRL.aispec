@@ -1,0 +1,4 @@
+watch = true;
+monitorCTRL = false;
+
+trace('monitorCTRL is ' + (monitorCTRL ? '[ON]' : '[OFF]'));
