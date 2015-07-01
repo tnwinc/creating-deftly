@@ -1,24 +1,5 @@
 ﻿#target illustrator
 
-var moduleNotFound = function(name){
-    alert("Failed to load module: " + name);
-    return false;
-};
-
-var testInstall = function() {
-    if (!Console) return moduleNotFound("Console");
-    if (!Ensure) return moduleNotFound("Ensure");
-    if (!Obj) return moduleNotFound("Obj");
-    if (!JSON) return moduleNotFound("JSON");
-    if (!Ai) return moduleNotFound("Ai");
-    if (!Str) return moduleNotFound("Str");
-    return true;
-};
-
-if (!testInstall()) {
-    app.quit();
-}
-
 var os = Folder.fs //Windows, Macintosh, or Unix. (Use $.os for a more verbose description with version nuumbers)
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
 var time = function(date) {
