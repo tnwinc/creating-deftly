@@ -196,6 +196,7 @@ var setInterval = function(func, time, breaker) {
 watch = false;
 monitorCTRL = false;
 watchList = [];
+testsList = [];
 var updateBreaker = function() {
     breaker.value = (watchList.length * monitorCTRL);
 };
@@ -218,7 +219,17 @@ var watchListContains = function(item) {
     return result;
 };
 var addToWatchList = function(item) {
-    if (!watchListContains(item).exists) watchList.push(item);
+    if (!watchListContains(item).exists) watchList.push({
+        file        : item,
+        name        : item.name,
+        lastModified: item.modified,
+        isUpdated   : function() {
+            var now = this.file.modified.getTime();
+            var last = this.lastModified.getTime();
+            if (last !== now) return true;
+            return false;
+        }
+    });
     updateBreaker();
 };
 var removeFromWatchList = function(item) {
@@ -245,8 +256,21 @@ var runTest = function(test) {
 };
 
 var monitor;
+var reset = function() {
+    describes = [];
+    its = [];
+    passing = 0;
+    pending = 0;
+    failing = 0;
+    watch = false;
+    monitorCTRL = false;
+    watchList = [];
+    testsList = [];
+    updateBreaker();
+}
 var run = function() {
     clearTestLogs();
+    reset();
     startTime = time();
     trace('Running Illustrator Tests: ' + date() + spaces(1) + startTime.standard + '\n');
 
@@ -256,24 +280,26 @@ var run = function() {
     var finalTime = time();
     trace('finished running tests ' + finalTime.diff(startTime));
     printResults();
+    trace('monitorCTRL is ' + (monitorCTRL ? '[ON] Watching for changes...' : '[OFF] Quiting'));
     if (!breaker.value) app.quit();
     else {
-        trace('watching: ' + '\n    ' + watchList.join('\n    '));
+        var names = [];
+        for (var i in watchList) names.push(watchList[i].name);
+        trace('Watching\n    ' + names.join('\n    ') + '\nSet monitorCTRL=false to stop.');
         monitor(watchList);
     }
 };
+
 var monitor = function(list) {
-    var file = watchList[0];
-    var last = file.modified;
-    var now;
     setInterval(function() {
-        now = file.modified;
-        if (last.getTime() == now.getTime()) trace('skip');
-        else {
-            trace('Updated ' + time().standard);
-            runTest(file);
+        var updated = false;
+        for (var i in watchList) {
+            if (watchList[i].isUpdated()) updated = true;
         }
-        last = now;
+
+        if (updated) {
+            run();
+        }
     }, 1000, breaker);
     app.quit();
 }
