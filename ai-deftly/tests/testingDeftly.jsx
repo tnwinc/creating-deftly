@@ -82,6 +82,7 @@ var writeToTestLogs = function(string) {
     testLogs.writeln(spaces(describes.length * tabSize) + string);
     testLogs.close();
 };
+var VERBOSE = false;
 var trace = function(string) {
     writeToTestLogs('testingDeftly-- ' + string);
 };
@@ -193,12 +194,13 @@ var setInterval = function(func, time, breaker) {
     }
 };
 
-watch = false;
-monitorCTRL = false;
-watchList = [];
-testsList = [];
+var watch = false;
+var MONITOR_CTRL = false;
+var OFF = false;
+var ON = true;
+var watchList = [];
 var updateBreaker = function() {
-    breaker.value = (watchList.length * monitorCTRL);
+    breaker.value = (watchList.length * MONITOR_CTRL);
 };
 var watchListContains = function(item) {
     var result = {
@@ -232,22 +234,41 @@ var addToWatchList = function(item) {
     });
     updateBreaker();
 };
+var watchFile = function(path) {
+    var file = File(path);
+    if (!file.exists) {
+        trace('[watchFile does not exist] (' + file + ')');
+        return;
+    }
+    addToWatchList(file);
+}
+var watchFolder = function(path, _mask) {
+    mask = _mask || "*";
+    var folder = Folder(path);
+    if (!folder.exists) {
+        trace('[watchFolder does not exist] (' + folder + ')');
+        return;
+    }
+    files = folder.getFiles(mask);
+    for (var i in files) addToWatchList(files[i]);
+}
 var removeFromWatchList = function(item) {
     var index = watchListContains(item).index;
     if (index > -1) watchList.splice(index, 1);
     updateBreaker();
 };
-var watchFile, watchFolder = undefined;
-
+var evalFile = function(file) {
+    file.open("r");
+    var js = file.read();
+    file.close();
+    eval(js);
+};
 var runTest = function(test) {
     watch = false;
-    test.open("r");
-    var js = test.read();
-    test.close();
-    eval(js);
-    if (watch && monitorCTRL) {
+    evalFile(test);
+    if (watch && MONITOR_CTRL) {
         addToWatchList(test);
-        trace('watching: ' + test.name);
+        if (VERBOSE) trace('watching: ' + test.name);
     } else {
         removeFromWatchList(test);
     }
@@ -263,9 +284,9 @@ var reset = function() {
     pending = 0;
     failing = 0;
     watch = false;
-    monitorCTRL = false;
+    MONITOR_CTRL = false;
+    VERBOSE = false;
     watchList = [];
-    testsList = [];
     updateBreaker();
 }
 var run = function() {
@@ -280,13 +301,18 @@ var run = function() {
     var finalTime = time();
     trace('finished running tests ' + finalTime.diff(startTime));
     printResults();
-    trace('monitorCTRL is ' + (monitorCTRL ? '[ON] Watching for changes...' : '[OFF] Quiting'));
+    trace('MONITOR_CTRL is ' + (MONITOR_CTRL ? '[ON] Watching for changes...' : '[OFF] Quiting'));
     if (!breaker.value) app.quit();
     else {
-        var names = [];
-        for (var i in watchList) names.push(watchList[i].name);
-        trace('Watching\n    ' + names.join('\n    ') + '\nSet monitorCTRL=false to stop.');
-        monitor(watchList);
+        if (VERBOSE) {
+            var names = [];
+            for (var i in watchList) names.push(watchList[i].name);
+            trace('Watching:\n    ' + names.join('\n    ') + '\n[Set MONITOR_CTRL = OFF to stop]');
+            monitor(watchList);
+        } else {
+            trace('Watching ' + watchList.length + ' files\n[Set MONITOR_CTRL = OFF to stop]');
+            monitor(watchList);
+        }
     }
 };
 

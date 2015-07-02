@@ -1,6 +1,7 @@
 watch = true;
-// watchFile = "~/Projects/creating-deftly/ai-deftly/creatingDeftly";
-// watchFolder = "~/Projects/creating-deftly/ai-deftly/creatingDeftly/Str.js";
+var cut = File("~/Projects/creating-deftly/ai-deftly/creatingDeftly/Str.js");
+evalFile(cut);
+var Str = module.Str;
 
 describe('Str.js', function() {
     describe('when %# and interpolation arguments are provided', function() {

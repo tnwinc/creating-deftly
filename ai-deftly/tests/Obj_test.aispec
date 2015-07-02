@@ -1,4 +1,7 @@
 watch = true;
+var cut = File("~/Projects/creating-deftly/ai-deftly/creatingDeftly/Obj.js");
+evalFile(cut);
+var Obj = module.Obj;
 
 describe('Obj.js', function() {
     describe('isObject', function() {

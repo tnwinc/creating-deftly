@@ -1,4 +1,7 @@
 watch = true;
-monitorCTRL = false;
+// VERBOSE = true;
+MONITOR_CTRL = OFF;
+trace('MONITOR_CTRL is ' + (MONITOR_CTRL ? '[ON]' : '[OFF]'));
 
-trace('monitorCTRL is ' + (monitorCTRL ? '[ON]' : '[OFF]'));
+watchFile("~/Projects/creating-deftly/ai-deftly/creatingDeftly/Str.js");
+watchFolder("~/Projects/creating-deftly/ai-deftly/creatingDeftly", "*.js");
