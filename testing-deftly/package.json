@@ -1,0 +1,12 @@
+{
+  "name": "testing-deftly",
+  "private": true,
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "^2.0.0",
+    "mocha":"*"
+  },
+  "scripts": {
+  }
+}
