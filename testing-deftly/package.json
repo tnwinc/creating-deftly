@@ -9,10 +9,11 @@
     "blanket": "*"
   },
   "scripts": {
+    "test": "mocha; mocha --require blanket -R html-cov > coverage.html;"
   },
   "config": {
     "blanket": {
-      "pattern": [""],
+      "pattern": "//\/[\\w-]+\\.js$/",
       "data-cover-never": [ "node_modules"]
     }
   }
