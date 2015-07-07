@@ -10,6 +10,8 @@ If you're looking for an easier way to work with [Adobe's ExtendScript](https://
 ### Caveats
 This is still a new initiative and many applications are not yet supported.
 
+[Here is the current roadmap](https://www.pivotaltracker.com/n/projects/1358100)
+
 ### Mentions & Acknowledgements
 
 Some of the APIs make use of json2.js - https://github.com/douglascrockford/JSON-js
