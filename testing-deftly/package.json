@@ -4,9 +4,16 @@
   "dependencies": {
   },
   "devDependencies": {
-    "chai": "^2.0.0",
-    "mocha":"*"
+    "chai"   : "^2.0.0",
+    "mocha"  : "*",
+    "blanket": "*"
   },
   "scripts": {
+  },
+  "config": {
+    "blanket": {
+      "pattern": [""],
+      "data-cover-never": [ "node_modules"]
+    }
   }
 }

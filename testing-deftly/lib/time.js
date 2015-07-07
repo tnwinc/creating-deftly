@@ -16,6 +16,7 @@ var time = function(date) {
         diff          : function(oldTime, newTime) {
             var newTime = newTime || _inMilliseconds;
             var timeDiff = newTime - oldTime.inMilliseconds;
+            if (timeDiff < 0) return ('(-time, reverse your evaluation)');
 
             var hours   = (1000*60*60);
             var minutes = (1000*60);
@@ -24,7 +25,7 @@ var time = function(date) {
             var format = function(value, part) {
                 if (part == 'm' && value == 000) return '0m';
                 if (value > 0) return (value+part);
-                else return '';
+                return '';
             }
 
             var hoursDiff        = format(Math.floor(timeDiff/hours), 'h');
@@ -40,3 +41,4 @@ var time = function(date) {
     return result;
 }
 
+module.exports = time;
