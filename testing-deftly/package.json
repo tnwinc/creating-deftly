@@ -4,9 +4,10 @@
   "dependencies": {
   },
   "devDependencies": {
-    "chai"   : "^2.0.0",
-    "mocha"  : "*",
-    "blanket": "*"
+    "chai"        : "^2.0.0",
+    "mocha"       : "*",
+    "mocha-eslint": "*",
+    "blanket"     : "*"
   },
   "scripts": {
     "test": "mocha; mocha --require blanket -R html-cov > coverage.html;"

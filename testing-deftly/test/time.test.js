@@ -1,3 +1,5 @@
+'use strict';
+/*global describe it*/
 var chai = require('chai');
 chai.should();
 var expect = chai.expect;
@@ -38,7 +40,7 @@ describe('time', function() {
     describe('diff', function() {
 
         describe('when comparing an increase in time', function() {
-            var oldTime = { inMilliseconds: 52005000};
+            var oldTime = {inMilliseconds: 52005000};
             var newTime = 63006010;
             var diff = time().diff(oldTime, newTime);
             it('should return a diff string', function() {
@@ -47,7 +49,7 @@ describe('time', function() {
         });
 
         describe('when comparing a decrease in time', function() {
-            var newTime = { inMilliseconds: 63006010};
+            var newTime = {inMilliseconds: 63006010};
             var oldTime = 52005000;
             var diff = time().diff(newTime, oldTime);
             it('should return a negative error time string', function() {
@@ -56,7 +58,7 @@ describe('time', function() {
         });
 
         describe('when comparing equal times', function() {
-            var oldTime = { inMilliseconds: 52005000};
+            var oldTime = {inMilliseconds: 52005000};
             var newTime = 52005000;
             var diff = time().diff(oldTime, newTime);
             it('should return a simple diff string', function() {
