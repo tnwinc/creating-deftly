@@ -14,7 +14,6 @@ var MONITOR_CTRL = false;
 var OFF = false;
 var ON = true;
 
-#include "lib/logging.js";
 #include "lib/branching.js";
 #include "expect.js";
 #include "timers.js";

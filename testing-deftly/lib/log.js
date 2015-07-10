@@ -1,17 +1,43 @@
 'use strict';
-/*global File*/
-var log = function(path, name, tabSize, lineFeed) {
+
+var Log = function(path, name, tabSize, lineFeed, _File) {
+    try {
+        _File = File || _File; // eslint-disable-line no-undef
+    } catch(e) {
+        //do nothing
+    }
+
     var logObj = {};
 
-    logObj.path = path || '~/Dekstop/';
-    logObj.name = name || 'adobe.test';
+    var setPath = function(path) {
+        if (path.substr(path.length - 1, 1) !== '/') path += '/';
+        logObj.path = path;
+        return logObj;
+    };
+    logObj.setPath = setPath;
+    setPath(path || '~/Dekstop/');
 
-    logObj.lineFeed = lineFeed || 'Unix'; //"Windows" "Macintosh"
-    logObj.setLineFeed = function(feedType) { logObj.lineFeed = feedType; return logObj; };
+    var setName = function(name) {
+        if (name.substr(name.length - 1, 1) === '/') name = name.substr(0, name.length - 1);
+        if (name.substr(0, 1) === '/') name = name.substr(1, name.length);
+        logObj.name = name;
+        return logObj;
+    };
+    logObj.setName = setName;
+    setName(name || 'adobe.test');
+
+    var setLineFeed = function(feedType) {
+        logObj.lineFeed = feedType;
+        return logObj;
+    };
+    logObj.setLineFeed = setLineFeed;
+    setLineFeed(lineFeed || 'Unix'); //"Windows" "Macintosh"
 
     var setFile = function(path, name) {
-        var filePath = path + name;
-        var file = new File(filePath);
+        setPath(path);
+        setName(name);
+        var filePath = logObj.path + logObj.name;
+        var file = new _File(filePath);
         // if (!file.exists) file = new File(filePath);
 
         file.encoding = 'UTF-8';
@@ -23,8 +49,13 @@ var log = function(path, name, tabSize, lineFeed) {
     logObj.setFile = setFile;
     setFile(path, name);
 
-    logObj.tabSize = tabSize || 4;
-    logObj.setTabSize = function(size) { logObj.tabSize = size || 4; return logObj; };
+    var setTabSize = function(size) {
+        logObj.tabSize = size || 4;
+        return logObj;
+    };
+    logObj.setTabSize = setTabSize;
+    setTabSize(tabSize || 4);
+
     var tab = function(number) {
         var spaces = '';
         while (number > 0) {
@@ -35,23 +66,25 @@ var log = function(path, name, tabSize, lineFeed) {
     };
     logObj.tab = tab;
 
-    var writeLn = function(string, tabCount, action) {
+    var writeln = function(string, tabCount, action) {
         if (string === undefined || string === null) throw ('log Object: writeLn: ERROR: Must provide a string value');
         tabCount = tabCount || 0;
         action = action || 'a'; //'w'
         logObj.file.open(action);
         logObj.file.writeln(tab(tabCount * logObj.tabSize) + string);
         logObj.file.close();
+        return logObj;
     };
-    logObj.writeLn = writeLn;
+    logObj.writeLn = writeln;
 
     var trace = function(string) {
-        writeLn('testingDeftly-- ' + string);
+        writeln('testingDeftly-- ' + string);
+        return logObj;
     };
     logObj.trace = trace;
 
     var clear = function() {
-        logObj.writeln('', 0, 'w');
+        writeln('', 0, 'w');
         return logObj;
     };
     logObj.clear = clear;
@@ -59,4 +92,4 @@ var log = function(path, name, tabSize, lineFeed) {
     return logObj;
 };
 
-module.exports = log;
+module.exports = Log;
