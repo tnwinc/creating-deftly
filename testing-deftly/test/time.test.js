@@ -3,7 +3,7 @@
 var chai = require('chai');
 chai.should();
 var expect = chai.expect;
-var time = require('../lib/time');
+var time = require('../lib/Time');
 
 describe('time', function() {
     var test = time();
