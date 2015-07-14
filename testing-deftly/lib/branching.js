@@ -15,7 +15,7 @@ var Branching = function(path, logger) {
         writeToTestLogs('xDescribe ' + description + ' ~~');
         writeToTestLogs('\n');
     };
-    branchingObj.xDescribe = xdescribe;
+    branchingObj.xdescribe = xdescribe;
 
     var describe = function(description, cb) {
         writeToTestLogs('Describe ' + description + ' --');
