@@ -1,6 +1,7 @@
 'use strict';
-/*global describe it beforeEach*/
+/*global describe it before beforeEach*/
 var expect = require('chai').expect;
+var Time = require('../lib/Time');
 var mocFile = require('./File.moc');
 var Log = require('../lib/log');
 var logText = '';
@@ -18,8 +19,8 @@ var Branching = require('../lib/Branching')('testPath', mocLogger);
 
 var _describe = Branching.describe;
 var _xdescribe = Branching.xdescribe;
-// var _it = Branching.it;
-// var _xit = Branching.xit;
+var _it = Branching.it;
+var _xit = Branching.xit;
 
 describe('branching', function() {
     beforeEach(function() {
@@ -53,10 +54,101 @@ describe('branching', function() {
     });
 
     describe('it', function() {
+        var mocTestResult = function(passed) {
+            return {
+                passed  : passed,
+                expected: 1,
+                operator: 'to be       : ',
+                got     : 1,
+                time    : new Time()
+            };
+        };
 
+        describe('it with no tests', function() {
+            it('should push and pop itself from the describes array and pass', function() {
+                expect(Branching.its.length).to.equal(0);
+
+                _it('testIt', function() {
+                    expect(logText).to.equal('');
+                    expect(Branching.its.length).to.equal(1);
+                });
+
+                expect(Branching.its.length).to.equal(0);
+                expect(logText).to.contains('~No Assertions Made for: It testIt: ');
+            });
+        });
+
+        describe('it with a passing test', function() {
+            it('should push and pop itself from the describes array and pass', function() {
+                expect(Branching.its.length).to.equal(0);
+
+                _it('testIt', function() {
+                    expect(logText).to.equal('');
+                    expect(Branching.its.length).to.equal(1);
+
+                    Branching.its[0].tests.push(mocTestResult(true));
+                });
+
+                expect(Branching.its.length).to.equal(0);
+                expect(logText).to.contains('✔ It testIt: ');
+            });
+        });
+
+        describe('it with a failing test', function() {
+            it('should push and pop itself from the describes array and pass', function() {
+                expect(Branching.its.length).to.equal(0);
+
+                _it('testIt', function() {
+                    expect(logText).to.equal('');
+                    expect(Branching.its.length).to.equal(1);
+
+                    Branching.its[0].tests.push(mocTestResult(false));
+                });
+
+                expect(Branching.its.length).to.equal(0);
+                expect(logText).to.contains('✘ It testIt: ');
+            });
+        });
+
+        describe('it with several tests', function() {
+            it('should push and pop itself from the describes array and pass', function() {
+                expect(Branching.its.length).to.equal(0);
+
+                _it('testIt', function() {
+                    expect(logText).to.equal('');
+                    expect(Branching.its.length).to.equal(1);
+
+                    Branching.its[0].tests.push(mocTestResult(false));
+                    Branching.its[0].tests.push(mocTestResult(true));
+                    Branching.its[0].tests.push(mocTestResult(false));
+                    Branching.its[0].tests.push(mocTestResult(true));
+                });
+
+                expect(Branching.its.length).to.equal(0);
+                expect(logText).to.contains('✘ It testIt: ');
+                expect(logText).to.contains('1 ✘');
+                expect(logText).to.contains('2 ✔');
+                expect(logText).to.contains('3 ✘');
+                expect(logText).to.contains('4 ✔');
+            });
+        });
     });
 
     describe('xit', function() {
+        before(function() {
+            Branching.pending = 0;
+        });
 
+        it('should not push itself to the its array', function() {
+            expect(Branching.its.length).to.equal(0);
+
+            _xit('testxit', function() {});
+            expect(Branching.its.length).to.equal(0);
+
+            expect(Branching.its.length).to.equal(0);
+            expect(logText).to.contains('xIt testxit ~~');
+
+            expect(Branching.pending).to.equal(1);
+        });
     });
 });

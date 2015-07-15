@@ -58,6 +58,7 @@ var Branching = function(path, logger) {
             }
         }
 
+        if (!results.length) passing = '~No Assertions Made for: It ';
         writeToTestLogs(passing + description + ': ' + itFinalTime.diff(itStartTime));
         if (passing === '✘ It ' || results.length > 1) {
             for (i = 0; i < tests.length; i++) {
