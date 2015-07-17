@@ -10,7 +10,9 @@
     "blanket"     : "*"
   },
   "scripts": {
-    "test": "mocha; mocha --require blanket -R html-cov > coverage.html;"
+    "test" : "mocha; mocha --require blanket -R html-cov > coverage.html;",
+    "NOTE" : "Must use npm run debug",
+    "debug": "mocha --debug-brk;"
   },
   "config": {
     "blanket": {

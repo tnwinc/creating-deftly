@@ -1,5 +1,5 @@
 'use strict';
-var Time = require('./Time');
+var Time = require('./Time'); //TODO This probably doesn't belong here
 
 var Branching = function(path, logger) {
     var writeToTestLogs = logger.writeln;
