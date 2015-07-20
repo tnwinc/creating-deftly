@@ -42,7 +42,7 @@ var Assertions = function(branching) {
         var pass = (Object.prototype.toString.call(actual) === '[object ' + expected + ']');
         return result(pass, expected, OPORATORS.isA, actual, message);
     };
-    assertObj.typeOf = assertObj.toBeA;
+    assertObj.typeOf = assertObj.isA;
     assertObj.isNotA = function(actual, expected, message) {
         var pass = (Object.prototype.toString.call(actual) !== '[object ' + expected + ']');
         return result(pass, expected, OPORATORS.isNotA, actual, message);
