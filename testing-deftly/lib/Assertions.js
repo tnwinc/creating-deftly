@@ -18,7 +18,7 @@ var Assertions = function(branching) {
         toNotEqual: 'to NOT equal: '
     };
 
-    var Result = function(_passed, _expected, _oporator, _got, _message) {
+    var result = function(_passed, _expected, _oporator, _got, _message) {
         if (_passed) passing++;
         else failing++;
 
@@ -37,34 +37,48 @@ var Assertions = function(branching) {
     };
 
     assertObj.equal = function(actual, expected, message) {
-        var pass = false;
-        if (actual == expected) pass = true; // eslint-disable-line eqeqeq
-        return new Result(pass, expected, OPORATORS.toEqual, actual, message);
+        var pass = (actual == expected); // eslint-disable-line eqeqeq
+        return result(pass, expected, OPORATORS.toEqual, actual, message);
     };
 
     assertObj.notEqual = function(actual, expected, message) {
-        var pass = false;
-        if (actual != expected) pass = true; // eslint-disable-line eqeqeq
-        return new Result(pass, expected, OPORATORS.toNotEqual, actual, message);
+        var pass = (actual != expected); // eslint-disable-line eqeqeq
+        return result(pass, expected, OPORATORS.toNotEqual, actual, message);
+    };
+
+    assertObj.toBe = function(actual, expected, message) {
+        var pass = (actual === expected);
+        return result(pass, expected, OPORATORS.toBe, actual, message);
+    };
+    assertObj.areSame = assertObj.toBe;
+
+    assertObj.toBeA = function(actual, expected, message) {
+        var pass = (Object.prototype.toString.call(actual) === '[object ' + expected + ']');
+        return result(pass, expected, OPORATORS.toBeA, actual, message);
+    };
+    assertObj.typeOf = assertObj.toBeA;
+
+    assertObj.toNotBe = function(actual, expected, message) {
+        var pass = (actual !== expected);
+        return result(pass, expected, OPORATORS.toNotBe, actual, message);
+    };
+
+    assertObj.toNotBeA = function(actual, expected, message) {
+        var pass = (Object.prototype.toString.call(actual) !== '[object ' + expected + ']');
+        return result(pass, expected, OPORATORS.toNotBeA, actual, message);
     };
 
 
     assertObj.expect = function(test) {
         return {
             to: {
-                be: function(expected) {
-                    return assertObj.equal(test === expected, 'to be       : ', expected);
-                },
-                equal: function(expected) {
-                    return assertObj.equal(test, expected);
-                },
-                not: {
-                    be: function(unexpected) {
-                            return assertObj.equal(test !== unexpected, 'to NOT be   : ', unexpected);
-                    },
-                    equal: function(unexpected) {
-                            return assertObj.notEqual(test, unexpected);
-                    }
+                be   : function(expected) { return assertObj.toBe(test, expected); },
+                beA  : function(expected) { return assertObj.toBeA(test, expected); },
+                equal: function(expected) { return assertObj.equal(test, expected); },
+                not  : {
+                    be   : function(unexpected) { return assertObj.toNotBe(test, unexpected); },
+                    beA  : function(unexpected) { return assertObj.toNotBeA(test, unexpected); },
+                    equal: function(unexpected) { return assertObj.notEqual(test, unexpected); }
                 }
             }
         };
