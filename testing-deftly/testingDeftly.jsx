@@ -14,7 +14,6 @@ var MONITOR_CTRL = false;
 var OFF = false;
 var ON = true;
 
-#include "expect.js";
 #include "timers.js";
 #include "watch.js";
 #include "evalFile.js";
