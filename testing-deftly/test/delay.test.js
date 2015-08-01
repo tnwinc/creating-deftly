@@ -14,7 +14,7 @@ describe('Delay', function() {
             var beforeTime = Date.now();
             var afterTime;
             Delay.doAfter(function() { afterTime = Date.now(); }, 10);
-            expect(beforeTime + 10).to.equal(afterTime);
+            expect(beforeTime + 9).to.be.below(afterTime);
         });
     });
 
