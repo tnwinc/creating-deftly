@@ -1,6 +1,12 @@
 'use strict';
 
-var Watcher = function() {
+var Watcher = function(logger, _File) {
+    try {
+        _File = File || _File; // eslint-disable-line no-undef
+    } catch(e) {
+        //do nothing
+    }
+    var trace = logger.trace;
     var watchObj = {};
 
     watchObj.enabled = false;
@@ -54,21 +60,25 @@ var Watcher = function() {
     };
     watchObj.removeFromwatchList = removeFromwatchList;
 
+    var watchFile = function(path) {
+        var file = new _File(path);
+        if (!file.exists) {
+            trace('[watchFile does not exist] (' + file + ')');
+            return;
+        }
+        addToWatchList(file);
+    };
+    watchObj.watchFile = watchFile;
+
+    return watchObj;
 };
 
 // var breaker = {value: 0};
 // var updateBreaker = function() {
 //     breaker.value = (watchList.length * MONITOR_CTRL);
 // };
-//
-// var watchFile = function(path) {
-//     var file = new File(path);
-//     if (!file.exists) {
-//         trace('[watchFile does not exist] (' + file + ')');
-//         return;
-//     }
-//     addToWatchList(file);
-// };
+//-------------ONLY USED IN A WATCH CONTROL FILE------------------
+
 //
 // var watchFolder = function(path, _mask) {
 //     mask = _mask || '*';
@@ -80,7 +90,7 @@ var Watcher = function() {
 //     files = folder.getFiles(mask);
 //     for (var i in files) addToWatchList(files[i]);
 // };
-//
+//---------END ONLY USED IN A WATCH CONTROL FILE------------------
 // var monitor = function(list) {
 //     setInterval(function() {
 //         var updated = false;
