@@ -10,32 +10,38 @@ var fileMoc = function(name) {
         modified: dateMoc(0)
     };
 };
-// var folderMoc = function(name, files) {
-//     return {
-//         name    : name,
-//         exists  : true,
-//         getFiles: function() { return files; }
-//     };
-// };
+var folderMoc = function(nameFilesArray) {
+    var name = nameFilesArray.shift();
+    var files = nameFilesArray;
+    return {
+        name    : name,
+        exists  : true,
+        getFiles: function() { return files; }
+    };
+};
 var loggerMoc = {text: ''};
 loggerMoc.trace = function(string) {loggerMoc.text = string; };
 
-var watcher = require('../lib/Watcher.js')(loggerMoc, fileMoc);
+var watcher = require('../lib/Watcher.js')(loggerMoc, fileMoc, folderMoc);
 
-// var testFile1 = fileMoc('testFile1');
+var testFile1 = fileMoc('testFile1');
 var testFile2 = fileMoc('testFile2');
-// var testFolder = folderMoc('testFolder', [testFile1, testFile2]);
 
 describe('watcher', function() {
     describe('adding and removing from watch list', function() {
         before(function() {
             watcher.watchList = [];
-            watcher.watchFile('testFile1');
-            watcher.watchFile('testFile2');
-            // watcher.watchFolder(testFolder);
-            watcher.removeFromwatchList(testFile2);
+            watcher.watchFolder(['testFolder', testFile1, testFile2]);
         });
-        it('should add/remove files to the watch list without duplicates', function() {
+
+        it('should add files to the watch list without duplicates', function() {
+            expect(watcher.watchList).to.have.length(2);
+            watcher.watchFile('testFile1');
+            expect(watcher.watchList).to.have.length(2);
+        });
+
+        it('should remove files from the watch list', function() {
+            watcher.removeFromwatchList(testFile2);
             expect(watcher.watchList).to.have.length(1);
         });
     });
