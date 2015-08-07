@@ -45,4 +45,26 @@ describe('watcher', function() {
             expect(watcher.watchList).to.have.length(1);
         });
     });
+
+    describe('watch a file and execute a callback when it has been modified', function() {
+        before(function() {
+            watcher.watchList = [];
+            watcher.watchFolder(['testFolder', testFile1, testFile2]);
+        });
+
+        it('should execute the callback each time the file is updated', function() {
+            var count = 0;
+            var callOrder = [];
+            testFile1.modified = dateMoc(1);
+            testFile2.modified = dateMoc(1);
+            watcher.start(function(f) {
+                count++;
+                callOrder.push(f.name);
+                if (count > 2) watcher.enabled = false;
+            });
+
+            expect(count).to.equal(3);
+            expect(callOrder).to.equal(['testFile1', 'testFile2', 'testFile1']);
+        });
+    });
 });

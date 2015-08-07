@@ -83,6 +83,18 @@ var Watcher = function(logger, _File, _Folder) {
     };
     watchObj.watchFolder = watchFolder;
 
+    var start = function(cb) {
+        if (!watchObj.enabled) return;
+        if (!cb) return;
+        setInterval(function() {
+            for (var i in watchObj.watchList) {
+                if (watchObj.watchList[i].isUpdated()) cb();
+            }
+        }, 1000, breaker);
+        //app.quit(); FIXME <--This function should only run callbacks on updates
+    };
+    watchObj.start = start;
+
     return watchObj;
 };
 
@@ -91,15 +103,5 @@ var Watcher = function(logger, _File, _Folder) {
 //     breaker.value = (watchList.length * MONITOR_CTRL);
 // };
 
-// var monitor = function(list) {
-//     setInterval(function() {
-//         var updated = false;
-//         for (var i in watchList) {
-//             if (watchList[i].isUpdated()) updated = true;
-//         }
-//
-//         if (updated) run();
-//     }, 1000, breaker);
-//     app.quit();
-// };
+
 module.exports = Watcher;
