@@ -61,11 +61,11 @@ describe('Watcher', function() {
             Watcher.start(function(f) {
                 count++;
                 callOrder.push(f.name);
-                if (count === 3) Watcher.enabled = false;
+                if (count === 2) Watcher.enabled = false;
+                console.log(count + ' : ' + callOrder);
             }, 1);
-
-            expect(count).to.equal(3);
-            expect(callOrder.toString()).to.equal('testFile1,testFile2,testFile1');
+            expect(count).to.equal(2);
+            expect(callOrder.toString()).to.equal('testFile1,testFile2');
         });
     });
 });

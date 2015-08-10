@@ -41,11 +41,12 @@ var Watcher = function(logger, _File, _Folder) {
             watchObj.watchList.push({
                 file        : item,
                 name        : item.name,
-                lastModified: item.modified,
+                lastModified: item.modified.getTime(),
                 isUpdated   : function() {
                     var now = this.file.modified.getTime();
-                    var last = this.lastModified.getTime();
+                    var last = this.lastModified;
                     if (last !== now) {
+                        this.lastModified = now;
                         return true;
                     }
                     return false;
