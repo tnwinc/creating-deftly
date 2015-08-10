@@ -1,8 +1,16 @@
 'use strict';
-/*global $*/
 
-var Delay = function(sleepFunc) {
-    var sleep = sleepFunc || $.sleep;
+if (!$) { // eslint-disable-line no-use-before-define
+    var $ = {};
+    $.sleep = function(delay) {
+        var endTime = Date.now() + delay;
+        var currentTime = null;
+        do currentTime = Date.now(); while (currentTime < endTime);
+    };
+}
+
+var Delay = function() {
+    var sleep = $.sleep;
 
     var delayObj = {};
 

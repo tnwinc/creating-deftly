@@ -1,5 +1,7 @@
 'use strict';
 
+var Delay = require('./Delay')();
+
 var Watcher = function(logger, _File, _Folder) {
     try {
         _File = File || _File; // eslint-disable-line no-undef
@@ -43,7 +45,9 @@ var Watcher = function(logger, _File, _Folder) {
                 isUpdated   : function() {
                     var now = this.file.modified.getTime();
                     var last = this.lastModified.getTime();
-                    if (last !== now) return true;
+                    if (last !== now) {
+                        return true;
+                    }
                     return false;
                 }
             });
@@ -83,25 +87,32 @@ var Watcher = function(logger, _File, _Folder) {
     };
     watchObj.watchFolder = watchFolder;
 
-    var start = function(cb) {
+
+    var start = function(cb, wait) {
+        wait = wait || 1000; //1 seconds
+
         if (!watchObj.enabled) return;
         if (!cb) return;
-        setInterval(function() {
+
+        var repeatFunc = function() {
+            if (!watchObj.enabled) this.stop();
             for (var i in watchObj.watchList) {
-                if (watchObj.watchList[i].isUpdated()) cb();
+                if (!watchObj.enabled) break;
+                var file = watchObj.watchList[i];
+                if (file.isUpdated()) {
+                    cb(file);
+                }
             }
-        }, 1000, breaker);
-        //app.quit(); FIXME <--This function should only run callbacks on updates
+        };
+        var repeater = Delay.repeatAfter(repeatFunc, wait);
+        repeater.start();
+
+        //app.quit(); FIXME <--The start function should only run callbacks on updates
     };
     watchObj.start = start;
 
     return watchObj;
 };
-
-// var breaker = {value: 0};
-// var updateBreaker = function() {
-//     breaker.value = (watchList.length * MONITOR_CTRL);
-// };
 
 
 module.exports = Watcher;

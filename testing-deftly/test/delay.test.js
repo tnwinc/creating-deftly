@@ -1,12 +1,8 @@
 'use strict';
 /*global describe it*/
 var expect = require('chai').expect;
-var sleepMoc = function(delay) {
-    var endTime = Date.now() + delay;
-    var currentTime = null;
-    do currentTime = Date.now(); while (currentTime < endTime);
-};
-var Delay = require('../lib/Delay')(sleepMoc);
+
+var Delay = require('../lib/Delay')();
 
 describe('Delay', function() {
     describe('doAfter', function() {
