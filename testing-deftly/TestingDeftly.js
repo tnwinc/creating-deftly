@@ -1,5 +1,5 @@
-﻿#target illustrator
-
+﻿//#target illustrator
+/*
 var os = Folder.fs //Windows, Macintosh, or Unix. (Use $.os for a more verbose description with version nuumbers)
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
 var describes = [];
@@ -13,8 +13,6 @@ var VERBOSE = false;
 var MONITOR_CTRL = false;
 var OFF = false;
 var ON = true;
-
-#include "watch.js";
 
 var reset = function() {
     describes = [];
@@ -76,3 +74,5 @@ var printResults = function() {
 }
 
 run();
+*/
+module.exports = function() {return 'foo'};

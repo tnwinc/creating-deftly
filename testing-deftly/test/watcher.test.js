@@ -62,7 +62,6 @@ describe('Watcher', function() {
                 count++;
                 callOrder.push(f.name);
                 if (count === 2) Watcher.enabled = false;
-                console.log(count + ' : ' + callOrder);
             }, 1);
             expect(count).to.equal(2);
             expect(callOrder.toString()).to.equal('testFile1,testFile2');
