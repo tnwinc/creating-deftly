@@ -1,6 +1,6 @@
 'use strict';
 
-var Delay = require('./Delay')();
+var Delay = require('./Delay');
 
 var Watcher = function(logger, _File, _Folder) {
     try {

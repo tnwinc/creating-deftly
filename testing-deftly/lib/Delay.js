@@ -46,6 +46,6 @@ var Delay = function() {
     delayObj.repeatAfter = repeatAfter;
 
     return delayObj;
-};
+}();
 
 module.exports = Delay;

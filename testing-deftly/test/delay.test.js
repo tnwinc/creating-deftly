@@ -2,7 +2,7 @@
 /*global describe it*/
 var expect = require('chai').expect;
 
-var Delay = require('../lib/Delay')();
+var Delay = require('../lib/Delay');
 
 describe('Delay', function() {
     describe('doAfter', function() {

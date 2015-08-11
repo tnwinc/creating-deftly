@@ -1,4 +1,41 @@
 ﻿//#target illustrator
+'use strict';
+
+var TestingDeftly = function(options, _File, _Folder){
+    options = options || {};
+    try {
+        _File = File || _File; // eslint-disable-line no-undef
+        _Folder = Folder || _Folder; // eslint-disable-line no-undef
+    } catch(e) {
+        //do nothing
+    }
+
+    var testingObj = {};
+
+    var reset = function(ops) {
+        ops = ops || options;
+        testingObj.testFileExtension = ops.testFileExtension || 'spec';
+        testingObj.projectDirectory = ops.projectDirectory || '~/Desktop';
+        testingObj.verboseOutput = ops.verboseOutput || false;
+        testingObj.enableWatch = ops.enableWatch || false;
+    };
+    reset();
+    testingObj.reset = reset;
+
+    var getTestFilesCollection = function() {
+        return _Folder(testingObj.projectDirectory).getFiles('*.' + testingObj.testFileExtension);
+    };
+
+    testingObj.run = function(ops) {
+        reset(ops);
+
+        var tests = 2;//getTestFilesCollection();
+        return tests;
+    };
+
+
+    return testingObj;
+};
 /*
 var os = Folder.fs //Windows, Macintosh, or Unix. (Use $.os for a more verbose description with version nuumbers)
 var workingDirectory = File($.fileName).parent; //Make a file module an alias this to pwd
@@ -75,4 +112,4 @@ var printResults = function() {
 
 run();
 */
-module.exports = function() {return 'foo'};
+module.exports = TestingDeftly;
