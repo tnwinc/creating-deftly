@@ -8,13 +8,15 @@ var fileMoc = function(name) {
         exists: true
     };
 };
-var folderMoc = function(nameFilesArray) {
-    var name = nameFilesArray.shift();
-    var files = nameFilesArray;
+var testFile1 = fileMoc('aiTest1.aispec');
+var testFile2 = fileMoc('aiTest2.aispec');
+var testFile3 = fileMoc('flTest1.flspec');
+var folderMoc = function() {
+    var files = [testFile1, testFile2, testFile3];
     return {
-        name    : name,
-        exists  : true,
-        getFiles: function() { return files; }
+        getFiles: function(pattern) {
+            return files.filter(function(f) {return f.name.match(pattern.substr(1)); });
+        }
     };
 };
 
@@ -45,7 +47,9 @@ describe('testingDeftly', function() {
             expect(TestingDeftly.enableWatch).to.equal(true);
         });
 
-        it('should collect all the test files with the provided extension');
+        it('should collect all the test files with the provided extension', function() {
+            expect(TestingDeftly.testFiles.length).to.equal(2);
+        });
 
         it('should run each test file');
 

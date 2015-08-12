@@ -18,19 +18,14 @@ var TestingDeftly = function(options, _File, _Folder){
         testingObj.projectDirectory = ops.projectDirectory || '~/Desktop';
         testingObj.verboseOutput = ops.verboseOutput || false;
         testingObj.enableWatch = ops.enableWatch || false;
+        testingObj.testFiles = _Folder(testingObj.projectDirectory).getFiles('*.' + testingObj.testFileExtension);
     };
     reset();
     testingObj.reset = reset;
 
-    var getTestFilesCollection = function() {
-        return _Folder(testingObj.projectDirectory).getFiles('*.' + testingObj.testFileExtension);
-    };
-
     testingObj.run = function(ops) {
         reset(ops);
 
-        var tests = 2;//getTestFilesCollection();
-        return tests;
     };
 
 
