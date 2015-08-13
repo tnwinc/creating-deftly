@@ -1,6 +1,8 @@
 ﻿//#target illustrator
 'use strict';
 
+var evalFile = require('./lib/require');
+
 var TestingDeftly = function(options, _File, _Folder){
     options = options || {};
     try {
@@ -23,9 +25,17 @@ var TestingDeftly = function(options, _File, _Folder){
     reset();
     testingObj.reset = reset;
 
+    var runTests = function() {
+        var tests = testingObj.testFiles;
+        for (var t in tests) {
+           evalFile(tests[t]);
+        }
+        return;
+    };
+
     testingObj.run = function(ops) {
         reset(ops);
-
+        runTests();
     };
 
 

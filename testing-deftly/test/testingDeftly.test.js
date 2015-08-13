@@ -2,15 +2,28 @@
 /*global describe before it*/
 var expect = require('chai').expect;
 
-var fileMoc = function(name) {
+var fileMoc = function(name, test) {
     return {
         name  : name,
-        exists: true
+        exists: true,
+        open  : function() {},
+        close : function() {},
+        called: false,
+        read  : function() { this.called = true; return test; }
     };
 };
-var testFile1 = fileMoc('aiTest1.aispec');
-var testFile2 = fileMoc('aiTest2.aispec');
-var testFile3 = fileMoc('flTest1.flspec');
+var testMoc = function(name, number, passing) {
+    var testCode = ("describe('" + name + "', function() {" +
+        "    it('should " + (passing ? 'pass' : 'fail') + "', function() {" +
+        '        expect(' + number + ').to.be(' + (passing ? number : undefined) + ');' +
+        '    });' +
+        '});'
+    );
+    return testCode;
+};
+var testFile1 = fileMoc('aiTest1.aispec', testMoc('Ai Test1', 1, true));
+var testFile2 = fileMoc('aiTest2.aispec', testMoc('Ai Test2', 2, false));
+var testFile3 = fileMoc('flTest1.flspec', testMoc('Flash Test1', 3, false));
 var folderMoc = function() {
     var files = [testFile1, testFile2, testFile3];
     return {
@@ -51,7 +64,9 @@ describe('testingDeftly', function() {
             expect(TestingDeftly.testFiles.length).to.equal(2);
         });
 
-        it('should run each test file');
+        it('should run each test file', function() {
+            expect(TestingDeftly.testFiles[0].called).to.equal(true);
+        });
 
         it('should print the results');
 
