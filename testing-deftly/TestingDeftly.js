@@ -4,45 +4,62 @@
 module.exports = function(options, mockFile, mockFolder) {
 
     var TestingDeftly = function(options, mockFile, mockFolder) {
-        if ( options ) this.options = options;
-        if ( mockFile ) this._file = mockFile; // eslint-disable-line no-undef
-        if ( mockFolder ) this._folder = mockFolder;  // eslint-disable-line no-undef
 
-        var _options = {};
-        var _file = File;
-        var _folder = Folder;
+        /// ************************************************************************
+        /// Constructor Safe Check
+        /// ************************************************************************
+        if ( !( this instanceof TestingDeftly ) ) {
+            return new TestingDeftly(options, mockFile, mockFolder);
+        }
+
+        /// ************************************************************************
+        /// Public Properties
+        /// ************************************************************************
+        this.testFileExtension = 'spec';
+        this.projectDirectory = '~/Desktop';
+        this.verboseOutput = false;
+        this.enableWatch = false;
+        this.testFiles = null;
+
+        /// ************************************************************************
+        /// Private Properties
+        /// ************************************************************************
+        var _options = options || {};
+        var _file = mockFile; // eslint-disable-line no-undef
+        var _folder = mockFolder; // eslint-disable-line no-undef
         var _evalFile = require('./lib/require');
         // var Log = require('./lib/log')(workingDirectory, '/testLogger.txt/', 2, 'Unix');
 
-        var runTests = function() {
+        /// ************************************************************************
+        /// Private Methods
+        /// ************************************************************************
+        var runTests = function () {
             var tests = this.testFiles;
+
             for (var t in tests) {
-               this._evalFile(tests[t]);
+               _evalFile(tests[t]);
             }
+
             return;
         };
-    };
 
-    TestingDeftly.prototype = {
-        testFileExtension: 'spec',
-        projectDirectory: '~/Desktop',
-        verboseOutput: false,
-        enableWatch: false,
-        testFiles: this._folder(this.projectDirectory).getFiles('*.' + this.testFileExtension),
-
-        reset: function(ops) {
-            ops = ops || this._options;
+        /// ************************************************************************
+        /// Privileged Methods
+        /// ************************************************************************
+        this.reset = function(ops) {
+            ops = ops || _options;
             this.testFileExtension = ops.testFileExtension || 'spec';
             this.projectDirectory = ops.projectDirectory || '~/Desktop';
             this.verboseOutput = ops.verboseOutput || false;
             this.enableWatch = ops.enableWatch || false;
-            this.testFiles = this._folder(this.projectDirectory).getFiles('*.' + this.testFileExtension);
-        },
+            //this.testFiles = _folder(this.projectDirectory).getFiles('*.' + this.testFileExtension);
+            this.testFiles = _folder('~/Desktop').getFiles('*.spec');
+        };
 
-        run: function(ops) {
+        this.run = function(ops) {
             this.reset(ops);
-            this.runTests();
-        }
+            runTests();
+        };
     };
 
     return new TestingDeftly(options, mockFile, mockFolder);
