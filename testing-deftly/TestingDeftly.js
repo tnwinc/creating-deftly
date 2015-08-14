@@ -1,15 +1,19 @@
 ﻿//#target illustrator
 'use strict';
 
-module.exports = function(options, mockFile, mockFolder) {
+module.exports = function(params) {
 
-    var TestingDeftly = function(options, mockFile, mockFolder) {
+    var TestingDeftly = function(params) {
 
         /// ************************************************************************
         /// Constructor Safe Check
         /// ************************************************************************
         if ( !( this instanceof TestingDeftly ) ) {
-            return new TestingDeftly(options, mockFile, mockFolder);
+            return new TestingDeftly(params);
+        }
+
+        if ( !(params.Folder) || !(params.File) ) {
+            throw 'Folder and File instances are required to initialize an instance of TestingDeftly.';
         }
 
         /// ************************************************************************
@@ -24,9 +28,9 @@ module.exports = function(options, mockFile, mockFolder) {
         /// ************************************************************************
         /// Private Properties
         /// ************************************************************************
-        var _options = options || {};
-        var _file = mockFile; // eslint-disable-line no-undef
-        var _folder = mockFolder; // eslint-disable-line no-undef
+        var _options = params.Options || {};
+        var _file = params.File; // eslint-disable-line no-undef
+        var _folder = params.Folder; // eslint-disable-line no-undef
         var _evalFile = require('./lib/require');
         // var Log = require('./lib/log')(workingDirectory, '/testLogger.txt/', 2, 'Unix');
 
@@ -41,7 +45,7 @@ module.exports = function(options, mockFile, mockFolder) {
             }
 
             return;
-        };
+        }.bind(this);
 
         /// ************************************************************************
         /// Privileged Methods
@@ -52,8 +56,7 @@ module.exports = function(options, mockFile, mockFolder) {
             this.projectDirectory = ops.projectDirectory || '~/Desktop';
             this.verboseOutput = ops.verboseOutput || false;
             this.enableWatch = ops.enableWatch || false;
-            //this.testFiles = _folder(this.projectDirectory).getFiles('*.' + this.testFileExtension);
-            this.testFiles = _folder('~/Desktop').getFiles('*.spec');
+            this.testFiles = _folder(this.projectDirectory).getFiles('*.' + this.testFileExtension);
         };
 
         this.run = function(ops) {
@@ -62,7 +65,7 @@ module.exports = function(options, mockFile, mockFolder) {
         };
     };
 
-    return new TestingDeftly(options, mockFile, mockFolder);
+    return new TestingDeftly(params);
 
 };
 

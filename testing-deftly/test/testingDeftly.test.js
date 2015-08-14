@@ -33,7 +33,7 @@ var folderMoc = function() {
     };
 };
 
-var TestingDeftly = require('../TestingDeftly')({}, fileMoc, folderMoc);
+var TestingDeftly = require('../TestingDeftly')({Folder: folderMoc, File: fileMoc, Options: {}});
 
 describe('testingDeftly', function() {
     it('should initialize with default values', function() {
