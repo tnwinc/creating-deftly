@@ -1,7 +1,23 @@
 {
+  "private": "true",
   "name": "testing-deftly",
-  "private": true,
-  "dependencies": {
+  "version": "0.1.0",
+  "description": "A Mocha-n-Chai-like testing framework for automated testing of your Adobe Extend Scripts in their respective applications' runtime. This project was started as part of Creating-Deftly's mission to provide an intuitive and testible extendsxript experience to everyone. Currently supported applications are: Illustrator",
+  "keywords": ["testing", "deftly", "creating", "extend", "script", "extend-script", "extendscript", "jsx", "Adobe", "Illustrator"],
+  "author": "??",
+  "contributors": [
+    "St. John Peaster <stjohn3d@outlook.com> (http://stjohn3d.com/)",
+    "David Carror"
+  ],
+  "license": "MIT",
+  "preferGlobal": true,
+  "files": ["bin", "lib"],
+  "bin": {
+    "tdeftly": "bin/index.js"
+  },
+  "repository": {
+    "type" : "git",
+    "url"  : "https://github.com/tnwinc/creating-deftly/tree/master/testing-deftly" 
   },
   "devDependencies": {
     "chai"        : "^2.0.0",
@@ -11,7 +27,7 @@
   },
   "scripts": {
     "test" : "mocha; mocha --require blanket -R html-cov > coverage.html;",
-    "NOTE" : "Must use npm run debug",
+    "NOTE" : "Use `npm run debug`, and set MS's Visual Studio Code's debug mode to 'Attach' to use break-points and step through your code.",
     "debug": "mocha --debug-brk;"
   },
   "config": {
