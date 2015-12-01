@@ -19,4 +19,11 @@ describe('parseArguments', function() {
 			expect(test.ignorecase).to.equal(true);
 		});
 	});
+
+	describe('keyValue pairs', function() {
+		it('should set the property on the object to the value of the next argument', function() {
+			var test = parseArguments(['--my-Key', 5]);
+			expect(test.mykey).to.equal(5);
+		});
+	});
 });
