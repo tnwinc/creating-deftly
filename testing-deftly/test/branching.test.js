@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 var Time = require('../lib/Time');
 var mocFile = require('./File.moc');
-var Log = require('../lib/log');
+var Log = require('../lib/logger');
 var logText = '';
 var mocLogger = new Log('./fodder', 'mocAdobe.test', 4, 'Unix', mocFile);
 mocLogger.writeln = function(string, tabCount, action) {

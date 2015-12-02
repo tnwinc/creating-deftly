@@ -1,0 +1,5 @@
+{
+	"watch"            : false,
+	"verbose"          : true,
+	"testFileExtension": "aispec",
+}

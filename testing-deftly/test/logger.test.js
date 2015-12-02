@@ -3,7 +3,7 @@
 
 var expect = require('chai').expect;
 var mocFile = require('./File.moc');
-var Log = require('../lib/log');
+var Log = require('../lib/logger');
 
 describe('Log', function() {
     var testLogger = new Log('./fodder', '/testLogger.txt/', 2, 'Unix', mocFile);

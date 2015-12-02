@@ -1,6 +1,6 @@
 'use strict';
 
-var Log = function(path, name, tabSize, lineFeed, _File) {
+var Logger = function(path, name, tabSize, lineFeed, _File) {
     try {
         _File = File || _File; // eslint-disable-line no-undef
     } catch(e) {
@@ -92,4 +92,4 @@ var Log = function(path, name, tabSize, lineFeed, _File) {
     return logObj;
 };
 
-module.exports = Log;
+module.exports = Logger;
