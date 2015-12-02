@@ -41,7 +41,6 @@ var Promise = function() {
 		_onRejected = func;
 		return this;
 	};
-	this.onError = this.onRejected;
 	this.finally = function(func) {
 		_onFinally = func;
 		return this;
