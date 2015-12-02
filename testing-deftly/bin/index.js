@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 'use strict';
-var exec = require('child_process').exec;
+var execAsyncCMD = require('./execAsyncCMD');
 var help = require('./help.js');
 var parseArgs = require('./parseArguments');
 var userArgs = process.argv.slice(2); // eslint-disable-line no-unused-vars
@@ -28,14 +28,13 @@ parseArgs(userArgs, tdeftly);
 
 if (tdeftly.help || tdeftly.h) help.show(); // eslint-disable-line curly
 else {
-	exec('pwd', function(err, stdout, stderr) { //child_process is async
-		if (err || stderr) console.log(err || stderr);
-		else {
-			var pwd = stdout;
-			console.log('Running Tests in ' + pwd);
-			if (tdeftly.watch) console.log('Watching...');
-			// Look for a testingDeftly.opts json file - refer to mocha.opts
-			// update tdeftly configuration with options supplied in folder
-		}
+	execAsyncCMD('pwd').then(function(dirPath) {
+		console.log(dirPath);
+	}).onError(function(err) {
+		console.log(err);
+	}).finally(function() {
+		console.log(' - Watching: ' + tdeftly.watch);
 	});
 }
+	// 		// Look for a testingDeftly.opts json file - refer to mocha.opts
+	// 		// update tdeftly configuration with options supplied in folder
