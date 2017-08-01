@@ -225,7 +225,7 @@ module.Fla = function() {
             }
         }
         var libBefore = doc.library.items.length;
-        doc.importFile('file://' + filePath,true,false,false);
+        doc.importFile(FLfile.platformPathToURI(filePath),true,false,false);
         var libAfter = doc.library.items.length;
         //Check to make sure the user didn't press CANCEL in the import options prompt
         if (libAfter > libBefore){
