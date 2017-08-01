@@ -11,6 +11,7 @@ def get_file_as_string(fileName)
     contents
 end
 
+_prototype_extensions = get_file_as_string("lib/prototypeExtensions.js")
 _console = get_file_as_string("lib/Console.js")
 _ensure = get_file_as_string("lib/Ensure.js")
 _json = get_file_as_string("lib/json2.js")
@@ -19,6 +20,9 @@ _fla = get_file_as_string("lib/Fla.jsfl")
 @output = """
 'use strict';
 var module = {};
+
+//-------- Prototype Extensions -----------
+#{_prototype_extensions}
 
 //-------- Console Code -----------
 #{_console}
