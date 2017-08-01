@@ -154,7 +154,7 @@ module.Fla = function() {
         return fl.getDocumentDOM();
     };
     var openFile = function(filePath) {
-        fl.openDocument('file://' + filePath);
+        fl.openDocument(FLfile.platformPathToURI(filePath));
         return fl.getDocumentDOM();
     };
     var save = function(doc) {
