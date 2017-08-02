@@ -86,6 +86,23 @@ module.Fla = function() {
                 var timeline = item._edit();
                 return processObjectList(timeline.layers);
             };
+            item._setSymbolType = function(type) {
+                symbolTypes = {
+                    MOVIECLIP: 'movie clip',
+                    GRAPHIC  : 'graphic',
+                    BUTTON   : 'button'
+                };
+                Ensure(symbolTypes[type], type + ' must be a valid symbolType [MOVIECLIP, GRAPHIC, BUTTON');
+                item._select();
+                doc.library.setItemProperty('symbolType', symbolTypes[type]);
+                if (symbolTypes[type] == 'movie clip') {
+                    addMovieClipMethods();
+                }
+                return item;
+            }
+        }
+
+        if (item.itemType == 'movie clip' || item.itemType == 'graphic' || item.itemType == 'button' || item.itemType == 'bitmap') {
             item._addToStage = function(x, y) {
                 if (!x) x = 0;
                 if (!y) y = 0;
@@ -102,20 +119,6 @@ module.Fla = function() {
                     return false;
                 }
             };
-            item._setSymbolType = function(type) {
-                symbolTypes = {
-                    MOVIECLIP: 'movie clip',
-                    GRAPHIC  : 'graphic',
-                    BUTTON   : 'button'
-                };
-                Ensure(symbolTypes[type], type + ' must be a valid symbolType [MOVIECLIP, GRAPHIC, BUTTON');
-                item._select();
-                doc.library.setItemProperty('symbolType', symbolTypes[type]);
-                if (symbolTypes[type] == 'movie clip') {
-                    addMovieClipMethods();
-                }
-                return item;
-            }
         }
         
         item._rename = function(name) {
