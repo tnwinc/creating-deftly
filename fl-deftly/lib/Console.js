@@ -22,7 +22,6 @@ var writeToFile = function(fileName, string) {
     var activeDoc = doc.name + ': ';
     var textToWrite = ('\n' + activeDoc + displayTime + string);
     var fileURI = (srcPath + fileName);
-    fl.trace(fileURI);
 
     FLfile.write(fileURI, textToWrite, 'append');
 };
@@ -34,6 +33,5 @@ module.Console = {
     },
     error: function(string) {
         writeToFile("adobe.err", string);
-        fl.quit(false);
     },
 };
