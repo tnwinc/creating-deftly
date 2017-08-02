@@ -154,11 +154,14 @@ module.Fla = function() {
         fl.trace('fla_build_lib:' + context + ': ' + message);
     };
     var getDoc = function() {
-        return fl.getDocumentDOM();
+        var doc = fl.getDocumentDOM();
+        doc.x = 0;
+        doc.y = 0;
+        return doc;
     };
     var openFile = function(filePath) {
         fl.openDocument(FLfile.platformPathToURI(filePath));
-        return fl.getDocumentDOM();
+        return Fla.getDoc();
     };
     var save = function(doc) {
         doc.save(false);
@@ -306,21 +309,176 @@ module.Fla = function() {
         doc.selection = newSelection;
         return processLibItem(doc.convertToSymbol(type, name, registrationPoint));
     };
+    var moveItemToPos = function(item, x, y) {
+        item.x = x || 0;
+        item.y = y || 0;
+        return item;
+    };
+    var ensureShapeValues = function(obj) {
+        Ensure(obj.x != undefined, 'Object, ' + obj.name + ', is missing the x property');
+        Ensure(obj.y != undefined, 'Object, ' + obj.name + ', is missing the y property');
+        Ensure(obj.width != undefined, 'Object, ' + obj.name + ', is missing the width property');
+        Ensure(obj.height != undefined, 'Object, ' +  obj.name + ', is missing the height property');
+    }
+    var alignItem = function(item) {
+        ensureShapeValues(item);
+        var moveTo = Fla.moveItemToPos;
+        var _toLeftOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, matchItem.x, item.y);
+            return item;
+        };
+        var _toTopOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, item.x, matchItem.y);
+            return item;
+        };
+        var _toRightOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, matchItem.x+matchItem.width-item.width, item.y);
+            return item;
+        };
+        var _toBottomOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, item.x, matchItem.y+matchItem.height-item.height);
+            return item;
+        };
+        var _toCenterOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            var x = matchItem.x + matchItem.width/2 - item.width/2;
+            var y = matchItem.y + matchItem.height/2 - item.height/2;
+            moveTo(item, x, y);
+            return item;
+        };
+        var _toTopLeftOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toTopOf(matchItem);
+            _toLeftOf(matchItem);
+            return item;
+        }
+        var _toTopRightOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toTopOf(matchItem);
+            _toRightOf(matchItem);
+            return item;
+        };
+        var _toBottomRightOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toBottomOf(matchItem);
+            _toRightOf(matchItem);
+            return item;
+        };
+        var _toBottomLeftOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toBottomOf(matchItem);
+            _toLeftOf(matchItem);
+            return item;
+        };
+        return {
+            toLeftOf        : _toLeftOf,
+            toTopLeftOf     : _toTopLeftOf,
+            toTopOf         : _toTopOf,
+            toTopRightOf    : _toTopRightOf,
+            toRightOf       : _toRightOf,
+            toBottomRightOf : _toBottomRightOf,
+            toBottomOf      : _toBottomOf,
+            toBottomLeftOf  : _toBottomLeftOf,
+            toCenterOf      : _toCenterOf
+        };
+    };
+    var matchItem = function(item) {
+        var difference = null;
+        var moveToPos = Fla.moveItemToPos;
+
+        var _toPoseOf = function(matchItem, _item) {
+            if(!_item) _item = item;
+            _item.x = matchItem.x;
+            _item.y = matchItem.y;
+            return _item;
+        };
+        var _toHeightOf = function(matchItem, _item) {
+            if(!_item) _item = item;
+            difference = (matchItem.height/_item.height);
+            _item.height = matchItem.height;
+            return _item;
+        };
+        var _toWidthOf = function(matchItem, _item) {
+            if(!_item) _item = item;
+            difference = (matchItem.width/_item.width);
+            _item.width = matchItem.width;
+            return _item;
+        };
+        var _to = function(matchItem, keepAspectRatio, alignment, _item) {
+            if(!_item) _item = item;
+            var alignments = {
+                LEFT            : 'toLeftOf',
+                TOP_LEFT        : 'toTopLeftOf',
+                TOP             : 'toTopOf',
+                TOP_RIGHT       : 'toTopRightOf',
+                RIGHT           : 'toRightOf',
+                BOTTOM_RIGHT    : 'toBottomRightOf',
+                BOTTOM          : 'toBottomOf',
+                BOTTOM_LEFT     : 'toBottomLeftOf',
+                CENTER          : 'toCenterOf'
+            };
+            if (!alignment) alignment = 'CENTER';
+            var align = Ensure(alignments[alignment], alignment + ' must be valid [LEFT, TOP, RIGHT, BOTTOM, CENTER]');
+
+            if (!keepAspectRatio) {
+                _toPoseOf(matchItem, _item);
+                _toHeightOf(matchItem, _item);
+                _toWidthOf(matchItem, _item);
+            } else {
+                var maxWidth = matchItem.width;
+                var maxHeight = matchItem.height;
+
+                var scaleToWidth = function() {
+                    _toWidthOf(matchItem, _item);
+                    _item.height *= difference;
+                };
+                var scaleToHeight = function() {
+                    _toHeightOf(matchItem, _item);
+                    _item.width *= difference;
+                }
+
+                //should we match the width or the height?
+                if (maxWidth < maxHeight) {
+                    scaleToWidth();
+                    if (_item.height > matchItem.height) scaleToHeight();
+                } else {
+                   scaleToHeight();
+                   if (_item.width > matchItem.width) scaleToWidth();
+                }
+                Fla.alignItem(_item).toCenterOf(matchItem);
+                Fla.alignItem(_item)[align](matchItem);
+            };
+            return _item;
+        };
+        return {
+            toPosOf             : _toPoseOf,
+            toHeightOf          : _toHeightOf,
+            toWidthOf           : _toWidthOf,
+            to                  : _to
+        };
+    };
     return {
-        print                  : print,
-        getDoc                 : getDoc,
-        openFile               : openFile,
-        save                   : save,
-        build                  : build,
-        closeAndQuit           : closeAndQuit,
-        importToLibrary        : importToLibrary,
-        getScenes              : getScenes,
-        processLibItem         : processLibItem,
-        getLibItems            : getLibItems,
-        getSceneByName         : getSceneByName,
-        getLibItemByName       : getLibItemByName,
-        setDocumentSize        : setDocumentSize,
-        matchDocumentToInstance: matchDocumentToInstance,
-        convertToSymbol        : convertToSymbol,
+        print                   : print,
+        getDoc                  : getDoc,
+        openFile                : openFile,
+        save                    : save,
+        build                   : build,
+        closeAndQuit            : closeAndQuit,
+        importToLibrary         : importToLibrary,
+        getScenes               : getScenes,
+        processLibItem          : processLibItem,
+        getLibItems             : getLibItems,
+        getSceneByName          : getSceneByName,
+        getLibItemByName        : getLibItemByName,
+        setDocumentSize         : setDocumentSize,
+        matchDocumentToInstance : matchDocumentToInstance,
+        convertToSymbol         : convertToSymbol,
+        moveItemToPos           : moveItemToPos,
+        alignItem               : alignItem,
+        matchItem               : matchItem
     };
 };
