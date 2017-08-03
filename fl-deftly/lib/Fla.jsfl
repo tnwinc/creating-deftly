@@ -149,6 +149,8 @@ module.Fla = function() {
     };
 
     // Core Api
+    var _pwd = fl.scriptURI;
+    _pwd = _pwd.substr(0 , _pwd.lastIndexOf("/")+1);
     var print = function(message, context) {
         if(!context) context = 'method';
         fl.trace('fla_build_lib:' + context + ': ' + message);
@@ -159,8 +161,10 @@ module.Fla = function() {
         doc.y = 0;
         return doc;
     };
-    var openFile = function(filePath) {
-        fl.openDocument(FLfile.platformPathToURI(filePath));
+    var openFile = function(filePathOrURI) {
+        var fileURI = filePathOrURI;
+        if (!filePathOrURI.startsWith('file:///')) fileURI = FLfile.platformPathToURI(filePathOrURI);
+        fl.openDocument(fileURI);
         return Fla.getDoc();
     };
     var save = function(doc) {
@@ -462,6 +466,7 @@ module.Fla = function() {
         };
     };
     return {
+        pwd                     : _pwd,
         print                   : print,
         getDoc                  : getDoc,
         openFile                : openFile,
