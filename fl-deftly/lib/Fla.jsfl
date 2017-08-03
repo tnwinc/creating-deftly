@@ -148,10 +148,17 @@ module.Fla = function() {
         return item;
     };
 
+    var isURI = function(str) {return str.startsWith('file:///')};
+
     var URIfromPath = function(filePathOrURI) {
-        if (filePathOrURI.startsWith('file:///')) return filePathOrURI;
+        if (isURI(filePathOrURI)) return filePathOrURI;
         return FLfile.platformPathToURI(filePathOrURI);
-    }
+    };
+
+    var PathFromURI = function(filePathOrURI) {
+        if (isURI(filePathOrURI)) return FLfile.uriToPlatformPath(filePathOrURI);
+        return filePathOrURI;
+    };
 
     // Core Api
     var _pwd = fl.scriptURI;
@@ -191,14 +198,14 @@ module.Fla = function() {
         
         //build either the swf or mp4
         if(ext.toLowerCase() === "mp4") {
-            doc.exportVideo('file://' + dirPath + '/' + fileName + '.mov');
+            doc.exportVideo(URIfromPath(dirPath) + '/' + fileName + '.mov');
         } else {
             profile.PublishFormatProperties.defaultNames=0;
             //All three of these need to be set to get it to actually use the file name
             profile.PublishFormatProperties.flash=1;
             profile.PublishFormatProperties.html=0;
             profile.PublishFormatProperties.flashDefaultName=0;
-            profile.PublishFormatProperties.flashFileName = dirPath + '/' + fileName + '.swf';
+            profile.PublishFormatProperties.flashFileName = PathFromURI(dirPath) + '/' + fileName + '.swf';
 
             profile.PublishFormatProperties.OmitTraceActions=0;
             profile.PublishFlashProperties.Report='0';
@@ -221,8 +228,7 @@ module.Fla = function() {
         //clean up and close
         doc.deletePublishProfile();
         
-        fl.compilerErrors.save('file://' + dirPath + '/tmp_compile.err');
-        //DO NOT CLOSE THE FILE, JUST QUIT. OTHERWISE FLASH WILL STALL
+        fl.compilerErrors.save(URIfromPath(dirPath) + '/tmp_compile.err');
     };
     var closeAndQuit = function(doc) {
         //DO NOT CLOSE THE FILE, JUST QUIT. OTHERWISE FLASH WILL STALL
