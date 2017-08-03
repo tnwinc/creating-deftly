@@ -148,6 +148,11 @@ module.Fla = function() {
         return item;
     };
 
+    var URIfromPath = function(filePathOrURI) {
+        if (filePathOrURI.startsWith('file:///')) return filePathOrURI;
+        return FLfile.platformPathToURI(filePathOrURI);
+    }
+
     // Core Api
     var _pwd = fl.scriptURI;
     _pwd = _pwd.substr(0 , _pwd.lastIndexOf("/")+1);
@@ -162,9 +167,7 @@ module.Fla = function() {
         return doc;
     };
     var openFile = function(filePathOrURI) {
-        var fileURI = filePathOrURI;
-        if (!filePathOrURI.startsWith('file:///')) fileURI = FLfile.platformPathToURI(filePathOrURI);
-        fl.openDocument(fileURI);
+        fl.openDocument(URIfromPath(filePathOrURI));
         return Fla.getDoc();
     };
     var save = function(doc) {
@@ -225,21 +228,21 @@ module.Fla = function() {
         //DO NOT CLOSE THE FILE, JUST QUIT. OTHERWISE FLASH WILL STALL
         fl.quit(false);
     };
-    var importToLibrary = function(doc, filePath, ui) {
+    var importToLibrary = function(doc, filePathOrURI, ui) {
         if (ui) {
             var URI = fl.browseForFileURL("select", "Import File");
             if (URI == null){
                 return 0; //short circut if the user hits cancel
             } else {
-                filePath = URI;
+                filePathOrURI = URI;
             }
         }
         var libBefore = doc.library.items.length;
-        doc.importFile(FLfile.platformPathToURI(filePath),true,false,false);
+        doc.importFile(URIfromPath(filePathOrURI),true,false,false);
         var libAfter = doc.library.items.length;
         //Check to make sure the user didn't press CANCEL in the import options prompt
         if (libAfter > libBefore){
-            this.print("Imported " + filePath, 'importToLibrary');
+            this.print("Imported " + filePathOrURI, 'importToLibrary');
             return 1;
         }
         else return 0;
