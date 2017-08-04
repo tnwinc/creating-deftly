@@ -86,6 +86,23 @@ module.Fla = function() {
                 var timeline = item._edit();
                 return processObjectList(timeline.layers);
             };
+            item._setSymbolType = function(type) {
+                symbolTypes = {
+                    MOVIECLIP: 'movie clip',
+                    GRAPHIC  : 'graphic',
+                    BUTTON   : 'button'
+                };
+                Ensure(symbolTypes[type], type + ' must be a valid symbolType [MOVIECLIP, GRAPHIC, BUTTON');
+                item._select();
+                doc.library.setItemProperty('symbolType', symbolTypes[type]);
+                if (symbolTypes[type] == 'movie clip') {
+                    addMovieClipMethods();
+                }
+                return item;
+            }
+        }
+
+        if (item.itemType == 'movie clip' || item.itemType == 'graphic' || item.itemType == 'button' || item.itemType == 'bitmap') {
             item._addToStage = function(x, y) {
                 if (!x) x = 0;
                 if (!y) y = 0;
@@ -102,20 +119,6 @@ module.Fla = function() {
                     return false;
                 }
             };
-            item._setSymbolType = function(type) {
-                symbolTypes = {
-                    MOVIECLIP: 'movie clip',
-                    GRAPHIC  : 'graphic',
-                    BUTTON   : 'button'
-                };
-                Ensure(symbolTypes[type], type + ' must be a valid symbolType [MOVIECLIP, GRAPHIC, BUTTON');
-                item._select();
-                doc.library.setItemProperty('symbolType', symbolTypes[type]);
-                if (symbolTypes[type] == 'movie clip') {
-                    addMovieClipMethods();
-                }
-                return item;
-            }
         }
         
         item._rename = function(name) {
@@ -145,17 +148,34 @@ module.Fla = function() {
         return item;
     };
 
+    var isURI = function(str) {return str.startsWith('file:///')};
+
+    var URIfromPath = function(filePathOrURI) {
+        if (isURI(filePathOrURI)) return filePathOrURI;
+        return FLfile.platformPathToURI(filePathOrURI);
+    };
+
+    var PathFromURI = function(filePathOrURI) {
+        if (isURI(filePathOrURI)) return FLfile.uriToPlatformPath(filePathOrURI);
+        return filePathOrURI;
+    };
+
     // Core Api
+    var _pwd = fl.scriptURI;
+    _pwd = _pwd.substr(0 , _pwd.lastIndexOf("/")+1);
     var print = function(message, context) {
         if(!context) context = 'method';
         fl.trace('fla_build_lib:' + context + ': ' + message);
     };
     var getDoc = function() {
-        return fl.getDocumentDOM();
+        var doc = fl.getDocumentDOM();
+        doc.x = 0;
+        doc.y = 0;
+        return doc;
     };
-    var openFile = function(filePath) {
-        fl.openDocument('file://' + filePath);
-        return fl.getDocumentDOM();
+    var openFile = function(filePathOrURI) {
+        fl.openDocument(URIfromPath(filePathOrURI));
+        return Fla.getDoc();
     };
     var save = function(doc) {
         doc.save(false);
@@ -178,14 +198,14 @@ module.Fla = function() {
         
         //build either the swf or mp4
         if(ext.toLowerCase() === "mp4") {
-            doc.exportVideo('file://' + dirPath + '/' + fileName + '.mov');
+            doc.exportVideo(URIfromPath(dirPath) + '/' + fileName + '.mov');
         } else {
             profile.PublishFormatProperties.defaultNames=0;
             //All three of these need to be set to get it to actually use the file name
             profile.PublishFormatProperties.flash=1;
             profile.PublishFormatProperties.html=0;
             profile.PublishFormatProperties.flashDefaultName=0;
-            profile.PublishFormatProperties.flashFileName = dirPath + '/' + fileName + '.swf';
+            profile.PublishFormatProperties.flashFileName = PathFromURI(dirPath) + '/' + fileName + '.swf';
 
             profile.PublishFormatProperties.OmitTraceActions=0;
             profile.PublishFlashProperties.Report='0';
@@ -208,28 +228,27 @@ module.Fla = function() {
         //clean up and close
         doc.deletePublishProfile();
         
-        fl.compilerErrors.save('file://' + dirPath + '/tmp_compile.err');
-        //DO NOT CLOSE THE FILE, JUST QUIT. OTHERWISE FLASH WILL STALL
+        fl.compilerErrors.save(URIfromPath(dirPath) + '/tmp_compile.err');
     };
     var closeAndQuit = function(doc) {
         //DO NOT CLOSE THE FILE, JUST QUIT. OTHERWISE FLASH WILL STALL
         fl.quit(false);
     };
-    var importToLibrary = function(doc, filePath, ui) {
+    var importToLibrary = function(doc, filePathOrURI, ui) {
         if (ui) {
             var URI = fl.browseForFileURL("select", "Import File");
             if (URI == null){
                 return 0; //short circut if the user hits cancel
             } else {
-                filePath = URI;
+                filePathOrURI = URI;
             }
         }
         var libBefore = doc.library.items.length;
-        doc.importFile('file://' + filePath,true,false,false);
+        doc.importFile(URIfromPath(filePathOrURI),true,false,false);
         var libAfter = doc.library.items.length;
         //Check to make sure the user didn't press CANCEL in the import options prompt
         if (libAfter > libBefore){
-            this.print("Imported " + filePath, 'importToLibrary');
+            this.print("Imported " + filePathOrURI, 'importToLibrary');
             return 1;
         }
         else return 0;
@@ -303,21 +322,177 @@ module.Fla = function() {
         doc.selection = newSelection;
         return processLibItem(doc.convertToSymbol(type, name, registrationPoint));
     };
+    var moveItemToPos = function(item, x, y) {
+        item.x = x || 0;
+        item.y = y || 0;
+        return item;
+    };
+    var ensureShapeValues = function(obj) {
+        Ensure(obj.x != undefined, 'Object, ' + obj.name + ', is missing the x property');
+        Ensure(obj.y != undefined, 'Object, ' + obj.name + ', is missing the y property');
+        Ensure(obj.width != undefined, 'Object, ' + obj.name + ', is missing the width property');
+        Ensure(obj.height != undefined, 'Object, ' +  obj.name + ', is missing the height property');
+    }
+    var alignItem = function(item) {
+        ensureShapeValues(item);
+        var moveTo = Fla.moveItemToPos;
+        var _toLeftOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, matchItem.x, item.y);
+            return item;
+        };
+        var _toTopOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, item.x, matchItem.y);
+            return item;
+        };
+        var _toRightOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, matchItem.x+matchItem.width-item.width, item.y);
+            return item;
+        };
+        var _toBottomOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            moveTo(item, item.x, matchItem.y+matchItem.height-item.height);
+            return item;
+        };
+        var _toCenterOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            var x = matchItem.x + matchItem.width/2 - item.width/2;
+            var y = matchItem.y + matchItem.height/2 - item.height/2;
+            moveTo(item, x, y);
+            return item;
+        };
+        var _toTopLeftOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toTopOf(matchItem);
+            _toLeftOf(matchItem);
+            return item;
+        }
+        var _toTopRightOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toTopOf(matchItem);
+            _toRightOf(matchItem);
+            return item;
+        };
+        var _toBottomRightOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toBottomOf(matchItem);
+            _toRightOf(matchItem);
+            return item;
+        };
+        var _toBottomLeftOf = function(matchItem) {
+            ensureShapeValues(matchItem);
+            _toBottomOf(matchItem);
+            _toLeftOf(matchItem);
+            return item;
+        };
+        return {
+            toLeftOf        : _toLeftOf,
+            toTopLeftOf     : _toTopLeftOf,
+            toTopOf         : _toTopOf,
+            toTopRightOf    : _toTopRightOf,
+            toRightOf       : _toRightOf,
+            toBottomRightOf : _toBottomRightOf,
+            toBottomOf      : _toBottomOf,
+            toBottomLeftOf  : _toBottomLeftOf,
+            toCenterOf      : _toCenterOf
+        };
+    };
+    var matchItem = function(item) {
+        var difference = null;
+        var moveToPos = Fla.moveItemToPos;
+
+        var _toPoseOf = function(matchItem, _item) {
+            if(!_item) _item = item;
+            _item.x = matchItem.x;
+            _item.y = matchItem.y;
+            return _item;
+        };
+        var _toHeightOf = function(matchItem, _item) {
+            if(!_item) _item = item;
+            difference = (matchItem.height/_item.height);
+            _item.height = matchItem.height;
+            return _item;
+        };
+        var _toWidthOf = function(matchItem, _item) {
+            if(!_item) _item = item;
+            difference = (matchItem.width/_item.width);
+            _item.width = matchItem.width;
+            return _item;
+        };
+        var _to = function(matchItem, keepAspectRatio, alignment, _item) {
+            if(!_item) _item = item;
+            var alignments = {
+                LEFT            : 'toLeftOf',
+                TOP_LEFT        : 'toTopLeftOf',
+                TOP             : 'toTopOf',
+                TOP_RIGHT       : 'toTopRightOf',
+                RIGHT           : 'toRightOf',
+                BOTTOM_RIGHT    : 'toBottomRightOf',
+                BOTTOM          : 'toBottomOf',
+                BOTTOM_LEFT     : 'toBottomLeftOf',
+                CENTER          : 'toCenterOf'
+            };
+            if (!alignment) alignment = 'CENTER';
+            var align = Ensure(alignments[alignment], alignment + ' must be valid [LEFT, TOP, RIGHT, BOTTOM, CENTER]');
+
+            if (!keepAspectRatio) {
+                _toPoseOf(matchItem, _item);
+                _toHeightOf(matchItem, _item);
+                _toWidthOf(matchItem, _item);
+            } else {
+                var maxWidth = matchItem.width;
+                var maxHeight = matchItem.height;
+
+                var scaleToWidth = function() {
+                    _toWidthOf(matchItem, _item);
+                    _item.height *= difference;
+                };
+                var scaleToHeight = function() {
+                    _toHeightOf(matchItem, _item);
+                    _item.width *= difference;
+                }
+
+                //should we match the width or the height?
+                if (maxWidth < maxHeight) {
+                    scaleToWidth();
+                    if (_item.height > matchItem.height) scaleToHeight();
+                } else {
+                   scaleToHeight();
+                   if (_item.width > matchItem.width) scaleToWidth();
+                }
+                Fla.alignItem(_item).toCenterOf(matchItem);
+                Fla.alignItem(_item)[align](matchItem);
+            };
+            return _item;
+        };
+        return {
+            toPosOf             : _toPoseOf,
+            toHeightOf          : _toHeightOf,
+            toWidthOf           : _toWidthOf,
+            to                  : _to
+        };
+    };
     return {
-        print                  : print,
-        getDoc                 : getDoc,
-        openFile               : openFile,
-        save                   : save,
-        build                  : build,
-        closeAndQuit           : closeAndQuit,
-        importToLibrary        : importToLibrary,
-        getScenes              : getScenes,
-        processLibItem         : processLibItem,
-        getLibItems            : getLibItems,
-        getSceneByName         : getSceneByName,
-        getLibItemByName       : getLibItemByName,
-        setDocumentSize        : setDocumentSize,
-        matchDocumentToInstance: matchDocumentToInstance,
-        convertToSymbol        : convertToSymbol,
+        pwd                     : _pwd,
+        print                   : print,
+        getDoc                  : getDoc,
+        openFile                : openFile,
+        save                    : save,
+        build                   : build,
+        closeAndQuit            : closeAndQuit,
+        importToLibrary         : importToLibrary,
+        getScenes               : getScenes,
+        processLibItem          : processLibItem,
+        getLibItems             : getLibItems,
+        getSceneByName          : getSceneByName,
+        getLibItemByName        : getLibItemByName,
+        setDocumentSize         : setDocumentSize,
+        matchDocumentToInstance : matchDocumentToInstance,
+        convertToSymbol         : convertToSymbol,
+        moveItemToPos           : moveItemToPos,
+        alignItem               : alignItem,
+        matchItem               : matchItem
     };
 };
